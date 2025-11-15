@@ -23,7 +23,7 @@ export function RoleSelection({ onSelectRole }: RoleSelectionProps) {
           <Button className="w-full h-full p-6 md:p-8 lg:p-10">
             <div className="flex flex-col items-center justify-center h-full w-full">
               <div className="mb-6 md:mb-8 lg:mb-10 p-6 md:p-8 lg:p-12 rounded-full card-victim-icon-bg group-hover:card-victim-icon-bg-hover transition-colors shrink-0">
-                <Heart className="icon-victim" style={{ strokeWidth: '1.5px', color: '#ff0844' }} />
+                <Heart className="icon-victim" style={{ height: '80px', width: '80px', color: '#ff0844' }} />
               </div>
               <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold mb-4 md:mb-6 lg:mb-8 shrink-0">I Need Help</h2>
               <p className="text-lg md:text-xl lg:text-2xl xl:text-3xl text-gray-400 text-center whitespace-normal wrap-break-word max-w-2xl px-6 md:px-8">
@@ -38,7 +38,7 @@ export function RoleSelection({ onSelectRole }: RoleSelectionProps) {
           <Button className="w-full h-full p-6 md:p-8 lg:p-10">
             <div className="flex flex-col items-center justify-center h-full w-full">
               <div className="mb-6 md:mb-8 lg:mb-10 p-6 md:p-8 lg:p-12 rounded-full card-responder-icon-bg group-hover:card-responder-icon-bg-hover transition-colors shrink-0">
-                <HandHelping className="icon-responder" style={{ strokeWidth: '1.5px', color: '#00ff88' }} />
+                <HandHelping className="icon-responder" style={{ height: '80px', width: '80px', color: '#00ff88' }} />
               </div>
               <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold mb-4 md:mb-6 lg:mb-8 shrink-0">I Want to Help</h2>
               <p className="text-lg md:text-xl lg:text-2xl xl:text-3xl text-gray-400 text-center whitespace-normal wrap-break-word max-w-2xl px-6 md:px-8">
