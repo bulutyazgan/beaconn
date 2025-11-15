@@ -1,0 +1,82 @@
+// User roles
+export type UserRole = 'victim' | 'responder';
+
+// Help request types
+export type HelpRequestType = 'medical' | 'food' | 'shelter' | 'rescue' | 'other';
+export type Urgency = 'critical' | 'urgent' | 'standard';
+export type HelpRequestStatus = 'active' | 'responding' | 'resolved';
+
+// Resource types
+export type ResourceType = 'hospital' | 'shelter' | 'water' | 'safe-zone';
+export type OperatingStatus = 'open' | 'full' | 'closed';
+
+// News severity
+export type NewsSeverity = 'info' | 'warning' | 'critical';
+export type AlertSeverity = 'warning' | 'critical';
+
+// Location
+export interface Location {
+  lat: number;
+  lng: number;
+}
+
+// User
+export interface User {
+  id: string;
+  role: UserRole;
+  location: Location;
+}
+
+// Help Request
+export interface HelpRequest {
+  id: string;
+  victimId: string;
+  type: HelpRequestType;
+  urgency: Urgency;
+  location: Location;
+  peopleCount: number;
+  description?: string;
+  timestamp: Date;
+  status: HelpRequestStatus;
+  responderId?: string; // ID of responder who claimed this request
+}
+
+// Emergency Resource
+export interface EmergencyResource {
+  id: string;
+  type: ResourceType;
+  name: string;
+  location: Location;
+  capacity?: number;
+  currentOccupancy?: number;
+  operatingStatus: OperatingStatus;
+  contact?: string;
+}
+
+// News Update
+export interface NewsUpdate {
+  id: string;
+  title: string;
+  content: string;
+  source: string;
+  severity: NewsSeverity;
+  timestamp: Date;
+}
+
+// Alert
+export interface Alert {
+  id: string;
+  title: string;
+  message: string;
+  severity: AlertSeverity;
+  timestamp: Date;
+  expiresAt?: Date;
+}
+
+// Disaster Info
+export interface DisasterInfo {
+  name: string;
+  date: string;
+  location: string;
+  boundary?: Location[]; // Polygon points for disaster zone
+}
