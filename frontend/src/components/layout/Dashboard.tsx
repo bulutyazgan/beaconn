@@ -1,4 +1,5 @@
-import type { UserRole, DisasterInfo } from '@/types';
+import { useState, useEffect } from 'react';
+import type { UserRole, DisasterInfo, Location } from '@/types';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { Header } from './Header';
 import { MapContainer } from '@/components/map/MapContainer';
@@ -15,6 +16,16 @@ interface DashboardProps {
 export function Dashboard({ role, disaster, onChangeRole }: DashboardProps) {
   const { location, loading } = useGeolocation();
 
+  // State to manage map center - can be controlled by user location or help request selection
+  const [mapCenter, setMapCenter] = useState<Location>(disaster.center);
+
+  // Update map center when user location changes (but only initially)
+  useEffect(() => {
+    if (location) {
+      setMapCenter(location);
+    }
+  }, [location]);
+
   const handleRequestHelp = () => {
     // TODO: Implement RequestHelpDialog
     console.log('Request help clicked');
@@ -25,8 +36,10 @@ export function Dashboard({ role, disaster, onChangeRole }: DashboardProps) {
     // TODO: Show help request details dialog
   };
 
-  // Always use user's location if available, otherwise fall back to disaster center
-  const mapCenter = location || disaster.center;
+  // Handler for when a help request is clicked from the left panel
+  const handleHelpRequestClick = (requestLocation: Location) => {
+    setMapCenter(requestLocation);
+  };
 
   // Get help requests for this disaster
   const helpRequests = getHelpRequestsByDisaster(disaster.id);
@@ -51,7 +64,7 @@ export function Dashboard({ role, disaster, onChangeRole }: DashboardProps) {
       />
 
       {/* Left Panel with Tabs */}
-      <LeftPanel role={role} />
+      <LeftPanel role={role} onHelpRequestClick={handleHelpRequestClick} />
 
       {/* Map Container */}
       <div className="pt-16 h-screen">
@@ -59,6 +72,7 @@ export function Dashboard({ role, disaster, onChangeRole }: DashboardProps) {
           center={mapCenter}
           zoom={role === 'victim' ? 16 : 13}
           helpRequests={helpRequests}
+          userLocation={location}
           onMarkerClick={handleMarkerClick}
         />
       </div>

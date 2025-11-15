@@ -28,109 +28,108 @@
   }
 }
 
-@layer utilities {
-  .glass {
-    background: var(--glass-bg);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid var(--glass-border);
-  }
+/* Custom utility classes */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+}
 
-  .glass-hover {
-    background: var(--glass-bg);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid var(--glass-border);
-    transition: all 0.3s;
-  }
+.glass-hover {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  transition: all 0.3s;
+}
 
-  .glass-hover:hover {
-    background: rgba(31, 31, 31, 0.8);
-    border-color: rgba(255, 255, 255, 0.15);
-  }
+.glass-hover:hover {
+  background: rgba(31, 31, 31, 0.8);
+  border-color: rgba(255, 255, 255, 0.15);
+}
 
-  /* Victim Card - Red Theme */
-  .card-victim {
-    background: rgba(239, 68, 68, 0.05);
-    border-color: rgba(239, 68, 68, 0.3);
-  }
+/* Victim Card - Red Theme */
+.card-victim {
+  background: rgba(239, 68, 68, 0.05);
+  border-color: rgba(239, 68, 68, 0.3);
+}
 
-  .card-victim-icon-bg {
-    background: rgba(239, 68, 68, 0.2);
-  }
+.card-victim-icon-bg {
+  background: rgba(239, 68, 68, 0.2);
+}
 
-  .card-victim-icon-bg-hover {
-    background: rgba(239, 68, 68, 0.3);
-  }
+.card-victim-icon-bg-hover {
+  background: rgba(239, 68, 68, 0.3);
+}
 
-  .card-victim-button {
-    background: rgba(239, 68, 68, 0.3);
-    border-color: rgba(239, 68, 68, 0.5);
-  }
+.card-victim-button {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.5);
+}
 
-  .card-victim-button:hover {
-    background: rgba(239, 68, 68, 0.4);
-  }
+.card-victim-button:hover {
+  background: rgba(239, 68, 68, 0.4);
+}
 
-  /* Responder Card - Green Theme */
-  .card-responder {
-    background: rgba(16, 185, 129, 0.05);
-    border-color: rgba(16, 185, 129, 0.3);
-  }
+/* Responder Card - Green Theme */
+.card-responder {
+  background: rgba(16, 185, 129, 0.05);
+  border-color: rgba(16, 185, 129, 0.3);
+}
 
-  .card-responder-icon-bg {
-    background: rgba(16, 185, 129, 0.2);
-  }
+.card-responder-icon-bg {
+  background: rgba(16, 185, 129, 0.2);
+}
 
-  .card-responder-icon-bg-hover {
-    background: rgba(16, 185, 129, 0.3);
-  }
+.card-responder-icon-bg-hover {
+  background: rgba(16, 185, 129, 0.3);
+}
 
-  .card-responder-button {
-    background: rgba(16, 185, 129, 0.3);
-    border-color: rgba(16, 185, 129, 0.5);
-  }
+.card-responder-button {
+  background: rgba(16, 185, 129, 0.3);
+  border-color: rgba(16, 185, 129, 0.5);
+}
 
-  .card-responder-button:hover {
-    background: rgba(16, 185, 129, 0.4);
-  }
+.card-responder-button:hover {
+  background: rgba(16, 185, 129, 0.4);
+}
 
-  /* Google Maps InfoWindow Custom Styling */
-  .gm-style .gm-style-iw-c {
-    background: transparent !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    border-radius: 0 !important;
-    overflow: visible !important;
-  }
+/* Google Maps InfoWindow Custom Styling */
+.gm-style .gm-style-iw-c {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+}
 
-  .gm-style .gm-style-iw-d {
-    overflow: visible !important;
-    max-width: none !important;
-  }
+.gm-style .gm-style-iw-d {
+  overflow: visible !important;
+  max-width: none !important;
+}
 
-  .gm-style .gm-style-iw-t::after {
-    display: none !important;
-  }
+.gm-style .gm-style-iw-t::after {
+  display: none !important;
+}
 
-  .gm-ui-hover-effect {
-    top: 4px !important;
-    right: 4px !important;
-    width: 32px !important;
-    height: 32px !important;
-    opacity: 1 !important;
-    background: rgba(0, 0, 0, 0.5) !important;
-    border-radius: 50% !important;
-  }
+.gm-ui-hover-effect {
+  top: 4px !important;
+  right: 4px !important;
+  width: 32px !important;
+  height: 32px !important;
+  opacity: 1 !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  border-radius: 50% !important;
+}
 
-  .gm-ui-hover-effect:hover {
-    background: rgba(0, 0, 0, 0.7) !important;
-  }
+.gm-ui-hover-effect:hover {
+  background: rgba(0, 0, 0, 0.7) !important;
+}
 
-  .gm-ui-hover-effect > span {
-    background-color: #ffffff !important;
-    width: 16px !important;
-    height: 16px !important;
-    margin: 8px !important;
-  }
+.gm-ui-hover-effect > span {
+  background-color: #ffffff !important;
+  width: 16px !important;
+  height: 16px !important;
+  margin: 8px !important;
 }
