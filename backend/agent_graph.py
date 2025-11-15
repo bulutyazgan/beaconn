@@ -164,3 +164,16 @@ workflow.set_entry_point("intake_agent")
 #     {"case_group_manager": "case_group_manager", END: END}
 # )
 # workflow.add_edge("case_group_manager", END)
+
+# --- Helper Tools Integration (from helperAgents) ---
+# Expose a ready-to-use ToolNode so agent chains can call Valyu DeepSearch.
+tool_node = ToolNode(agent_tools.AVAILABLE_TOOLS)
+
+
+def build_search_graph():
+    """Simple graph that just routes requests straight to the tool suite."""
+    search_workflow = StateGraph(AgentState)
+    search_workflow.add_node("tool_executor", tool_node)
+    search_workflow.set_entry_point("tool_executor")
+    search_workflow.add_edge("tool_executor", END)
+    return search_workflow.compile()
