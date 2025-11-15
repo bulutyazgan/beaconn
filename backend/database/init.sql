@@ -138,6 +138,16 @@ CREATE TABLE updates (
     timestamp TIMESTAMP DEFAULT NOW()
 );
 
+-- Research Reports: AI-generated insights and analysis for emergency coordination
+-- Used for: situational awareness, resource planning, trend analysis
+CREATE TABLE research_reports (
+    id SERIAL PRIMARY KEY,
+    topic VARCHAR(255) NOT NULL, -- "Wildfire spread analysis", "Resource allocation optimization"
+    report TEXT NOT NULL, -- Full report content
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+
 -- ============================================================================
 -- PERFORMANCE INDEXES
 -- ============================================================================
@@ -163,3 +173,6 @@ CREATE INDEX idx_updates_case_group ON updates(case_group_id);
 CREATE INDEX idx_updates_case ON updates(case_id);
 CREATE INDEX idx_updates_assignment ON updates(assignment_id);
 CREATE INDEX idx_updates_timestamp ON updates(timestamp DESC);
+
+-- Index for chronological queries
+CREATE INDEX idx_research_reports_created ON research_reports(created_at DESC);
