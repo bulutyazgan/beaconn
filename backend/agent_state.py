@@ -31,3 +31,8 @@ class AgentState(TypedDict):
     
     # This will hold the final response to send to the user
     final_response: Optional[str]
+    
+    # add these if you want GPS in the state
+    latitude: Optional[float]
+    longitude: Optional[float]
+    caller_user_id: Optional[int]
