@@ -4,15 +4,15 @@ import { Header } from './Header';
 import { MapContainer } from '@/components/map/MapContainer';
 import { LeftPanel } from '@/components/panels/LeftPanel';
 import { RequestHelpFAB } from './RequestHelpFAB';
+import { getHelpRequestsByDisaster } from '@/data/mock-help-requests';
 
 interface DashboardProps {
   role: UserRole;
   disaster: DisasterInfo;
   onChangeRole: () => void;
-  onChangeDisaster: () => void;
 }
 
-export function Dashboard({ role, disaster, onChangeRole, onChangeDisaster }: DashboardProps) {
+export function Dashboard({ role, disaster, onChangeRole }: DashboardProps) {
   const { location, loading } = useGeolocation();
 
   const handleRequestHelp = () => {
@@ -20,8 +20,16 @@ export function Dashboard({ role, disaster, onChangeRole, onChangeDisaster }: Da
     console.log('Request help clicked');
   };
 
-  // Use disaster center as map center, or user location if available and in victim mode
-  const mapCenter = role === 'victim' && location ? location : disaster.center;
+  const handleMarkerClick = (request: any) => {
+    console.log('Victim marker clicked:', request);
+    // TODO: Show help request details dialog
+  };
+
+  // Always use user's location if available, otherwise fall back to disaster center
+  const mapCenter = location || disaster.center;
+
+  // Get help requests for this disaster
+  const helpRequests = getHelpRequestsByDisaster(disaster.id);
 
   if (loading && !location) {
     return (
@@ -40,7 +48,6 @@ export function Dashboard({ role, disaster, onChangeRole, onChangeDisaster }: Da
         role={role}
         disaster={disaster}
         onChangeRole={onChangeRole}
-        onChangeDisaster={onChangeDisaster}
       />
 
       {/* Left Panel with Tabs */}
@@ -48,7 +55,12 @@ export function Dashboard({ role, disaster, onChangeRole, onChangeDisaster }: Da
 
       {/* Map Container */}
       <div className="pt-16 h-screen">
-        <MapContainer center={mapCenter} zoom={role === 'victim' ? 15 : 12} />
+        <MapContainer
+          center={mapCenter}
+          zoom={role === 'victim' ? 16 : 13}
+          helpRequests={helpRequests}
+          onMarkerClick={handleMarkerClick}
+        />
       </div>
 
       {/* Request Help FAB (only for victims) */}

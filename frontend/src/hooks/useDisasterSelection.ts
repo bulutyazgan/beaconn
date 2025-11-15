@@ -14,28 +14,21 @@ interface UseDisasterSelectionReturn {
 
 export function useDisasterSelection(
   userLocation: { lat: number; lng: number } | null,
-  userRole: UserRole | null
+  _userRole: UserRole | null
 ): UseDisasterSelectionReturn {
-  const [selectedDisaster, setSelectedDisaster] = useState<DisasterInfo | null>(() => {
-    const stored = localStorage.getItem(DISASTER_STORAGE_KEY);
-    if (stored) {
-      const disaster = getDisasterById(stored);
-      return disaster || null;
-    }
-    return null;
-  });
+  const [selectedDisaster, setSelectedDisaster] = useState<DisasterInfo | null>(null);
 
   const [nearbyDisasters, setNearbyDisasters] = useState<DisasterInfo[]>([]);
 
-  // Find nearby disasters when location changes
+  // Find nearby disasters and auto-select closest one
   useEffect(() => {
-    if (userLocation && userRole === 'victim') {
+    if (userLocation) {
       const nearby = findNearbyDisasters(userLocation.lat, userLocation.lng);
       setNearbyDisasters(nearby);
 
-      // Auto-select disaster for victims if they're in an affected area and haven't selected one
+      // Auto-select the closest disaster if user hasn't selected one
       if (!selectedDisaster && nearby.length > 0) {
-        // Select the most severe disaster
+        // Select the most severe disaster first, then by proximity
         const mostSevere = nearby.sort((a, b) => {
           const severityOrder = { catastrophic: 4, severe: 3, moderate: 2, minor: 1 };
           return severityOrder[b.severity] - severityOrder[a.severity];
@@ -45,7 +38,7 @@ export function useDisasterSelection(
     } else {
       setNearbyDisasters([]);
     }
-  }, [userLocation, userRole]);
+  }, [userLocation]);
 
   const selectDisaster = (disasterId: string) => {
     const disaster = getDisasterById(disasterId);

@@ -7,10 +7,9 @@ interface HeaderProps {
   role: UserRole;
   disaster: DisasterInfo;
   onChangeRole: () => void;
-  onChangeDisaster: () => void;
 }
 
-export function Header({ role, disaster, onChangeRole, onChangeDisaster }: HeaderProps) {
+export function Header({ role, disaster, onChangeRole }: HeaderProps) {
   return (
     <header className="fixed top-0 left-0 right-0 z-40 glass border-b border-glass-border">
       <div className="flex items-center justify-between px-4 py-3">
@@ -23,19 +22,13 @@ export function Header({ role, disaster, onChangeRole, onChangeDisaster }: Heade
             <span className="font-bold text-lg hidden sm:inline">Emergency Response</span>
           </div>
 
-          <button
-            onClick={role === 'responder' ? onChangeDisaster : undefined}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-full bg-background-elevated border border-glass-border ${
-              role === 'responder' ? 'hover:border-accent-green/50 cursor-pointer' : ''
-            }`}
-            title={role === 'responder' ? 'Change disaster' : ''}
-          >
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-background-elevated border border-glass-border">
             <div className="w-2 h-2 bg-accent-red rounded-full animate-pulse" />
             <span className="text-xs sm:text-sm font-mono text-gray-300">
               {disaster.name} • {format(disaster.date, 'MMM d')}
             </span>
-            {role === 'responder' && <MapPin className="w-3 h-3 text-gray-500" />}
-          </button>
+            <MapPin className="w-3 h-3 text-gray-500" />
+          </div>
         </div>
 
         {/* Right: Role Badge and Settings */}

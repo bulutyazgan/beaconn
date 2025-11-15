@@ -1,90 +1,65 @@
 import { useEffect, useRef, useState } from 'react';
 import { setOptions, importLibrary } from '@googlemaps/js-api-loader';
-import type { Location } from '@/types';
+import type { Location, HelpRequest } from '@/types';
 import { defaultMapOptions } from '@/styles/map-theme';
+import { VictimMarkers } from './VictimMarkers';
 
 interface MapContainerProps {
   center: Location;
   zoom?: number;
+  helpRequests?: HelpRequest[];
   onMapLoad?: (map: any) => void;
+  onMarkerClick?: (request: HelpRequest) => void;
 }
 
 // Get API key from environment
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string;
 
-console.log('Google Maps API Key loaded:', GOOGLE_MAPS_API_KEY ? 'Yes (key present)' : 'No (missing)');
-console.log('API Key first 10 chars:', GOOGLE_MAPS_API_KEY?.substring(0, 10));
-
-if (!GOOGLE_MAPS_API_KEY) {
-  console.error('VITE_GOOGLE_MAPS_API_KEY is not defined in .env file');
-}
-
 // Flag to track if setOptions has been called
 let optionsConfigured = false;
 
-export function MapContainer({ center, zoom = 15, onMapLoad }: MapContainerProps) {
+export function MapContainer({ center, zoom = 15, helpRequests = [], onMapLoad, onMarkerClick }: MapContainerProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log('useEffect triggered, mapRef.current:', mapRef.current);
-    if (!mapRef.current) {
-      console.log('mapRef.current is null, skipping map initialization');
-      return;
-    }
+    if (!mapRef.current) return;
 
     const initMap = async () => {
       try {
-        console.log('initMap called');
-        console.log('API key value:', GOOGLE_MAPS_API_KEY);
-        console.log('API key type:', typeof GOOGLE_MAPS_API_KEY);
-        console.log('API key length:', GOOGLE_MAPS_API_KEY?.length);
-
         if (!GOOGLE_MAPS_API_KEY) {
           throw new Error('Google Maps API key is not configured. Add VITE_GOOGLE_MAPS_API_KEY to your .env file.');
         }
 
         // Configure API options (only once)
         if (!optionsConfigured) {
-          console.log('Configuring Google Maps API options...');
           setOptions({
             key: GOOGLE_MAPS_API_KEY,
             v: 'weekly',
           });
           optionsConfigured = true;
-          console.log('Google Maps API options configured');
         }
 
-        console.log('About to import maps library...');
         const { Map } = await importLibrary('maps');
-        console.log('Maps library imported successfully');
 
         if (!mapRef.current) return;
 
-        console.log('Creating map instance with:', { center, zoom });
         const mapInstance = new Map(mapRef.current, {
           ...defaultMapOptions,
           center,
           zoom,
         });
-        console.log('Map instance created:', mapInstance);
 
         setMap(mapInstance);
         setLoading(false);
-        console.log('Map state updated, loading set to false');
 
         if (onMapLoad) {
           onMapLoad(mapInstance);
         }
       } catch (err: any) {
         console.error('Error loading Google Maps:', err);
-        console.error('Error details:', {
-          message: err?.message,
-          stack: err?.stack,
-          name: err?.name
-        });
         setError(err?.message || 'Failed to load map. Please check your API key and billing settings.');
         setLoading(false);
       }
@@ -107,6 +82,13 @@ export function MapContainer({ center, zoom = 15, onMapLoad }: MapContainerProps
         ref={mapRef}
         className="w-full h-full"
         style={{ minHeight: '400px' }}
+      />
+
+      {/* Victim markers */}
+      <VictimMarkers
+        map={map}
+        helpRequests={helpRequests}
+        onMarkerClick={onMarkerClick}
       />
 
       {/* Loading overlay */}

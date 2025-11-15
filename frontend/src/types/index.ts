@@ -2,9 +2,9 @@
 export type UserRole = 'victim' | 'responder';
 
 // Help request types
-export type HelpRequestType = 'medical' | 'food' | 'shelter' | 'rescue' | 'other';
-export type Urgency = 'critical' | 'urgent' | 'standard';
-export type HelpRequestStatus = 'active' | 'responding' | 'resolved';
+export type HelpRequestType = 'medical' | 'food' | 'shelter' | 'rescue' | 'supplies' | 'other';
+export type Urgency = 'critical' | 'high' | 'medium' | 'low';
+export type HelpRequestStatus = 'pending' | 'in_progress' | 'resolved';
 
 // Resource types
 export type ResourceType = 'hospital' | 'shelter' | 'water' | 'safe-zone';
@@ -30,15 +30,18 @@ export interface User {
 // Help Request
 export interface HelpRequest {
   id: string;
-  victimId: string;
+  disasterId: string; // Which disaster this request is for
+  userId: string;
+  userName: string;
   type: HelpRequestType;
   urgency: Urgency;
   location: Location;
   peopleCount: number;
-  description?: string;
-  timestamp: Date;
+  description: string;
+  createdAt: Date;
   status: HelpRequestStatus;
-  responderId?: string; // ID of responder who claimed this request
+  claimedBy?: string; // ID of responder who claimed this request
+  claimedAt?: Date; // When the request was claimed
 }
 
 // Emergency Resource
