@@ -332,56 +332,64 @@ Timeline of disaster updates:
 
 ```
 greatagent/
-├── src/
-│   ├── components/
-│   │   ├── ui/              # Shadcn components
-│   │   │   ├── button.tsx
-│   │   │   ├── card.tsx
-│   │   │   ├── dialog.tsx
-│   │   │   ├── sheet.tsx
-│   │   │   ├── tabs.tsx
-│   │   │   ├── toast.tsx
-│   │   │   ├── badge.tsx
-│   │   │   └── ...
-│   │   ├── map/             # Map-related components
-│   │   │   ├── MapContainer.tsx
-│   │   │   ├── CustomMarker.tsx
-│   │   │   ├── MarkerCluster.tsx
-│   │   │   └── DisasterBoundary.tsx
-│   │   ├── panels/
-│   │   │   ├── LeftPanel.tsx
-│   │   │   ├── DetailPanel.tsx
-│   │   │   ├── RequestHelpDialog.tsx
-│   │   │   ├── HelpFeedTab.tsx
-│   │   │   ├── NewsTab.tsx
-│   │   │   ├── ResourcesTab.tsx
-│   │   │   └── AlertsTab.tsx
-│   │   └── layout/
-│   │       ├── Header.tsx
-│   │       └── RequestHelpFAB.tsx
-│   ├── lib/
-│   │   ├── utils.ts         # Tailwind cn(), etc.
-│   │   └── maps.ts          # Google Maps utilities
-│   ├── hooks/
-│   │   ├── useGeolocation.ts
-│   │   └── useMapMarkers.ts
-│   ├── types/
-│   │   └── index.ts         # TypeScript interfaces
-│   ├── styles/
-│   │   └── map-theme.ts     # Google Maps dark theme config
-│   ├── data/
-│   │   ├── mock-news.ts
-│   │   ├── mock-resources.ts
-│   │   └── mock-alerts.ts
-│   ├── App.tsx
-│   └── main.tsx
-├── public/
-│   └── markers/             # Custom marker SVGs
-├── tailwind.config.js
-├── components.json          # Shadcn config
-├── tsconfig.json
-├── vite.config.ts
-└── package.json
+├── frontend/                # All frontend code
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── ui/              # Shadcn components
+│   │   │   │   ├── button.tsx
+│   │   │   │   ├── card.tsx
+│   │   │   │   ├── dialog.tsx
+│   │   │   │   ├── sheet.tsx
+│   │   │   │   ├── tabs.tsx
+│   │   │   │   ├── toast.tsx
+│   │   │   │   ├── badge.tsx
+│   │   │   │   └── ...
+│   │   │   ├── role/            # Role selection
+│   │   │   │   └── RoleSelection.tsx
+│   │   │   ├── map/             # Map-related components
+│   │   │   │   ├── MapContainer.tsx
+│   │   │   │   ├── CustomMarker.tsx
+│   │   │   │   ├── MarkerCluster.tsx
+│   │   │   │   └── DisasterBoundary.tsx
+│   │   │   ├── panels/
+│   │   │   │   ├── LeftPanel.tsx
+│   │   │   │   ├── DetailPanel.tsx
+│   │   │   │   ├── RequestHelpDialog.tsx
+│   │   │   │   ├── HelpRequestsTab.tsx  # Responder only
+│   │   │   │   ├── MyRequestsTab.tsx     # Victim only
+│   │   │   │   ├── NewsTab.tsx
+│   │   │   │   ├── ResourcesTab.tsx
+│   │   │   │   └── AlertsTab.tsx
+│   │   │   └── layout/
+│   │   │       ├── Header.tsx
+│   │   │       └── RequestHelpFAB.tsx    # Victim only
+│   │   ├── lib/
+│   │   │   ├── utils.ts         # Tailwind cn(), etc.
+│   │   │   └── maps.ts          # Google Maps utilities
+│   │   ├── hooks/
+│   │   │   ├── useGeolocation.ts
+│   │   │   ├── useMapMarkers.ts
+│   │   │   └── useUserRole.ts   # Role management
+│   │   ├── types/
+│   │   │   └── index.ts         # TypeScript interfaces
+│   │   ├── styles/
+│   │   │   └── map-theme.ts     # Google Maps dark theme config
+│   │   ├── data/
+│   │   │   ├── mock-news.ts
+│   │   │   ├── mock-resources.ts
+│   │   │   └── mock-alerts.ts
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   ├── public/
+│   │   └── markers/             # Custom marker SVGs
+│   ├── tailwind.config.js
+│   ├── components.json          # Shadcn config
+│   ├── tsconfig.json
+│   ├── vite.config.ts
+│   └── package.json
+├── backend/                 # Empty for now
+└── docs/
+    └── plans/
 ```
 
 ## Key Type Definitions
