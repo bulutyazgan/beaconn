@@ -12,15 +12,10 @@ import agent_tools
 api_client = get_api_session()
 model_id = MODELS["recommended"]
 
+# Initialize workflow
 workflow = StateGraph(AgentState)
 
-
-from agent_state import AgentState
-from main import get_api_session, API_ENDPOINT, MODELS, TEAM_ID, API_TOKEN
-
-api_client = get_api_session()
-model_id = MODELS["recommended"]
-
+# --- Intake Agent (from InputProcessingAgent) ---
 def intake_agent(state: AgentState):
     """
     Intake agent: turns raw user text + GPS into a structured case object.
@@ -122,9 +117,50 @@ def intake_agent(state: AgentState):
         "case_context": case_obj,
     }
 
-workflow.add_node("intake_agent", intake_agent)
+# --- Case Group Manager Agent (from groupingAgents) ---
+def case_group_manager_agent(state: AgentState):
+    """
+    Case group manager: checks if a new case should be grouped with nearby cases.
+    """
+    case_id = state.get("case_id") or (state.get("case_context") or {}).get("id")
+    if not case_id:
+        return {"messages": [{"role": "assistant", "content": "No case ID provided."}]}
+    # Call grouping tool
+    grouping_result = agent_tools.process_case_grouping(case_id=case_id)
+    if grouping_result.get("group_created"):
+        msg = f"Case group {grouping_result['case_group_id']} created for cases: {grouping_result['cases']}."
+    else:
+        msg = f"No new group created. Nearby open cases: {grouping_result['cases_found']}."
+    return {"messages": [{"role": "assistant", "content": msg}], "case_group_update": grouping_result}
 
-# Example: make intake_agent the entry point for the “new help call” flow
+# --- Helper function for conditional routing ---
+def should_continue(state: AgentState):
+    """Placeholder for routing logic"""
+    return END
+
+# --- Coordinator function ---
+def coordinator(state: AgentState):
+    """Routes between different agents based on state"""
+    last_message = state["messages"][-1]
+    # If new case created, route to case group manager
+    if "new case created" in last_message.get("content", ""):
+        return "case_group_manager"
+    # Otherwise check if we should continue
+    else:
+        return should_continue(state)
+
+# --- Build the workflow graph ---
+workflow.add_node("intake_agent", intake_agent)
+workflow.add_node("case_group_manager", case_group_manager_agent)
+
+# Set intake_agent as entry point for new help calls
 workflow.set_entry_point("intake_agent")
 
-# Or have your main coordinator route to it when a new call arrives.
+# Add routing logic (this can be customized based on your needs)
+# Example: After intake, could route to case_group_manager or end
+# workflow.add_conditional_edges(
+#     "intake_agent",
+#     coordinator,
+#     {"case_group_manager": "case_group_manager", END: END}
+# )
+# workflow.add_edge("case_group_manager", END)
