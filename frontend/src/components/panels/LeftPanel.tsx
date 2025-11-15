@@ -1,17 +1,15 @@
 import { useState } from 'react';
-import type { UserRole } from '@/types';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import type { UserRole, Location } from '@/types';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Bell, Newspaper, MapPin } from 'lucide-react';
-import { AlertsTab } from './AlertsTab';
-import { NewsTab } from './NewsTab';
-import { ResourcesTab } from './ResourcesTab';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { HelpRequestList } from './HelpRequestList';
 
 interface LeftPanelProps {
   role: UserRole;
+  onHelpRequestClick?: (location: Location) => void;
 }
 
-export function LeftPanel({ }: LeftPanelProps) {
+export function LeftPanel({ onHelpRequestClick }: LeftPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -46,47 +44,12 @@ export function LeftPanel({ }: LeftPanelProps) {
             {/* Subtle gradient overlay for depth */}
             <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/5 via-transparent to-accent-purple/5 pointer-events-none" />
 
-            <Tabs defaultValue="alerts" className="h-full flex flex-col p-6 relative z-10">
-              {/* Enhanced tab list with better styling */}
-              <TabsList className="grid grid-cols-3 w-full bg-gradient-to-br from-background-elevated/60 to-background-elevated/40 border border-white/10 p-1.5 rounded-2xl shadow-xl backdrop-blur-sm">
-                <TabsTrigger
-                  value="alerts"
-                  className="text-sm font-semibold data-[state=active]:bg-gradient-to-br data-[state=active]:from-accent-orange/30 data-[state=active]:to-accent-orange/15 data-[state=active]:text-accent-orange data-[state=active]:shadow-lg data-[state=active]:shadow-accent-orange/20 data-[state=active]:border data-[state=active]:border-accent-orange/40 rounded-xl transition-all duration-300 hover:bg-white/5"
-                >
-                  <Bell className="w-4 h-4 mr-2" />
-                  Alerts
-                </TabsTrigger>
-                <TabsTrigger
-                  value="news"
-                  className="text-sm font-semibold data-[state=active]:bg-gradient-to-br data-[state=active]:from-accent-blue/30 data-[state=active]:to-accent-blue/15 data-[state=active]:text-accent-blue data-[state=active]:shadow-lg data-[state=active]:shadow-accent-blue/20 data-[state=active]:border data-[state=active]:border-accent-blue/40 rounded-xl transition-all duration-300 hover:bg-white/5"
-                >
-                  <Newspaper className="w-4 h-4 mr-2" />
-                  News
-                </TabsTrigger>
-                <TabsTrigger
-                  value="resources"
-                  className="text-sm font-semibold data-[state=active]:bg-gradient-to-br data-[state=active]:from-accent-green/30 data-[state=active]:to-accent-green/15 data-[state=active]:text-accent-green data-[state=active]:shadow-lg data-[state=active]:shadow-accent-green/20 data-[state=active]:border data-[state=active]:border-accent-green/40 rounded-xl transition-all duration-300 hover:bg-white/5"
-                >
-                  <MapPin className="w-4 h-4 mr-2" />
-                  Resources
-                </TabsTrigger>
-              </TabsList>
-
-              {/* Enhanced scrollable content area */}
-              <div className="flex-1 overflow-y-auto mt-6 pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-white/5 hover:scrollbar-thumb-white/30">
-                <TabsContent value="alerts" className="m-0">
-                  <AlertsTab />
-                </TabsContent>
-
-                <TabsContent value="news" className="m-0">
-                  <NewsTab />
-                </TabsContent>
-
-                <TabsContent value="resources" className="m-0">
-                  <ResourcesTab />
-                </TabsContent>
+            <div className="h-full flex flex-col p-6 relative z-10">
+              {/* Scrollable content area */}
+              <div className="flex-1 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-white/5 hover:scrollbar-thumb-white/30">
+                <HelpRequestList onHelpRequestClick={onHelpRequestClick} />
               </div>
-            </Tabs>
+            </div>
           </div>
         </div>
       </div>

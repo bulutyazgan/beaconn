@@ -5,11 +5,13 @@ import { defaultMapOptions } from '@/styles/map-theme';
 import { VictimMarkers } from './VictimMarkers';
 import { HeatmapLayer } from './HeatmapLayer';
 import { HeatmapToggle } from './HeatmapToggle';
+import { UserLocationMarker } from './UserLocationMarker';
 
 interface MapContainerProps {
   center: Location;
   zoom?: number;
   helpRequests?: HelpRequest[];
+  userLocation?: Location | null;
   onMapLoad?: (map: any) => void;
   onMarkerClick?: (request: HelpRequest) => void;
 }
@@ -20,7 +22,7 @@ const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string;
 // Flag to track if setOptions has been called
 let optionsConfigured = false;
 
-export function MapContainer({ center, zoom = 15, helpRequests = [], onMapLoad, onMarkerClick }: MapContainerProps) {
+export function MapContainer({ center, zoom = 15, helpRequests = [], userLocation, onMapLoad, onMarkerClick }: MapContainerProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -85,6 +87,12 @@ export function MapContainer({ center, zoom = 15, helpRequests = [], onMapLoad, 
         ref={mapRef}
         className="w-full h-full"
         style={{ minHeight: '400px' }}
+      />
+
+      {/* User location marker */}
+      <UserLocationMarker
+        map={map}
+        userLocation={userLocation || null}
       />
 
       {/* Victim markers */}
