@@ -48,4 +48,50 @@
     background: rgba(31, 31, 31, 0.8);
     border-color: rgba(255, 255, 255, 0.15);
   }
+
+  /* Victim Card - Red Theme */
+  .card-victim {
+    background: rgba(239, 68, 68, 0.05);
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+
+  .card-victim-icon-bg {
+    background: rgba(239, 68, 68, 0.2);
+  }
+
+  .card-victim-icon-bg-hover {
+    background: rgba(239, 68, 68, 0.3);
+  }
+
+  .card-victim-button {
+    background: rgba(239, 68, 68, 0.3);
+    border-color: rgba(239, 68, 68, 0.5);
+  }
+
+  .card-victim-button:hover {
+    background: rgba(239, 68, 68, 0.4);
+  }
+
+  /* Responder Card - Green Theme */
+  .card-responder {
+    background: rgba(16, 185, 129, 0.05);
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+
+  .card-responder-icon-bg {
+    background: rgba(16, 185, 129, 0.2);
+  }
+
+  .card-responder-icon-bg-hover {
+    background: rgba(16, 185, 129, 0.3);
+  }
+
+  .card-responder-button {
+    background: rgba(16, 185, 129, 0.3);
+    border-color: rgba(16, 185, 129, 0.5);
+  }
+
+  .card-responder-button:hover {
+    background: rgba(16, 185, 129, 0.4);
+  }
 }

@@ -20,9 +20,9 @@ export function RoleSelection({ onSelectRole }: RoleSelectionProps) {
         {/* Role Selection Cards */}
         <div className="grid md:grid-cols-2 gap-6">
           {/* Victim Role */}
-          <Card className="glass-hover cursor-pointer group border-accent-red/30 bg-accent-red/5" onClick={() => onSelectRole('victim')}>
+          <Card className="glass-hover cursor-pointer group card-victim" onClick={() => onSelectRole('victim')}>
             <CardHeader className="text-center">
-              <div className="mx-auto mb-4 p-4 rounded-full bg-accent-red/20 group-hover:bg-accent-red/30 transition-colors">
+              <div className="mx-auto mb-4 p-4 rounded-full card-victim-icon-bg group-hover:card-victim-icon-bg-hover transition-colors">
                 <Heart className="w-12 h-12 text-accent-red" />
               </div>
               <CardTitle className="text-2xl">I Need Help</CardTitle>
@@ -48,7 +48,7 @@ export function RoleSelection({ onSelectRole }: RoleSelectionProps) {
                 <span>Receive critical alerts and updates</span>
               </div>
               <div className="mt-6">
-                <Button variant="glass" className="w-full bg-accent-red/30 hover:bg-accent-red/40 border-accent-red/50 text-white">
+                <Button variant="glass" className="w-full card-victim-button text-white">
                   Select as Victim
                 </Button>
               </div>
@@ -56,9 +56,9 @@ export function RoleSelection({ onSelectRole }: RoleSelectionProps) {
           </Card>
 
           {/* Responder Role */}
-          <Card className="glass-hover cursor-pointer group border-accent-green/30 bg-accent-green/5" onClick={() => onSelectRole('responder')}>
+          <Card className="glass-hover cursor-pointer group card-responder" onClick={() => onSelectRole('responder')}>
             <CardHeader className="text-center">
-              <div className="mx-auto mb-4 p-4 rounded-full bg-accent-green/20 group-hover:bg-accent-green/30 transition-colors">
+              <div className="mx-auto mb-4 p-4 rounded-full card-responder-icon-bg group-hover:card-responder-icon-bg-hover transition-colors">
                 <HandHelping className="w-12 h-12 text-accent-green" />
               </div>
               <CardTitle className="text-2xl">I Want to Provide Help</CardTitle>
@@ -84,7 +84,7 @@ export function RoleSelection({ onSelectRole }: RoleSelectionProps) {
                 <span>Coordinate with emergency resources</span>
               </div>
               <div className="mt-6">
-                <Button variant="glass" className="w-full bg-accent-green/30 hover:bg-accent-green/40 border-accent-green/50 text-white">
+                <Button variant="glass" className="w-full card-responder-button text-white">
                   Select as Responder
                 </Button>
               </div>
