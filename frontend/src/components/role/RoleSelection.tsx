@@ -1,5 +1,5 @@
 import type { UserRole } from '@/types';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Heart, HandHelping } from 'lucide-react';
 
@@ -9,93 +9,49 @@ interface RoleSelectionProps {
 
 export function RoleSelection({ onSelectRole }: RoleSelectionProps) {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-background-primary p-4">
-      <div className="w-full max-w-4xl space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold text-white">Emergency Response System</h1>
-          <p className="text-gray-400">Choose your role to get started</p>
-        </div>
+    <div className="h-screen w-full flex flex-col bg-background-primary p-4 overflow-hidden">
+      {/* Header */}
+      <div className="text-center space-y-2 py-4 shrink-0">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white">Beaconn</h1>
+        <p className="text-base md:text-lg lg:text-xl xl:text-2xl text-gray-400">Connect with help during emergencies</p>
+      </div>
 
-        {/* Role Selection Cards */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Victim Role */}
-          <Card className="glass-hover cursor-pointer group card-victim" onClick={() => onSelectRole('victim')}>
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-4 p-4 rounded-full card-victim-icon-bg group-hover:card-victim-icon-bg-hover transition-colors">
-                <Heart className="w-12 h-12 text-accent-red" />
+      {/* Role Selection Cards - Takes remaining space */}
+      <div className="flex-1 flex flex-col md:flex-row gap-4 min-h-0 overflow-hidden">
+        {/* Victim Role */}
+        <Card className="flex-1 glass-hover cursor-pointer group card-victim overflow-hidden" onClick={() => onSelectRole('victim')}>
+          <Button className="w-full h-full p-6 md:p-8 lg:p-10">
+            <div className="flex flex-col items-center justify-center h-full w-full">
+              <div className="mb-6 md:mb-8 lg:mb-10 p-6 md:p-8 lg:p-12 rounded-full card-victim-icon-bg group-hover:card-victim-icon-bg-hover transition-colors shrink-0">
+                <Heart className="icon-victim" style={{ strokeWidth: '1.5px', color: '#ff0844' }} />
               </div>
-              <CardTitle className="text-2xl">I Need Help</CardTitle>
-              <CardDescription className="text-base">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold mb-4 md:mb-6 lg:mb-8 shrink-0">I Need Help</h2>
+              <p className="text-lg md:text-xl lg:text-2xl xl:text-3xl text-gray-400 text-center whitespace-normal wrap-break-word max-w-2xl px-6 md:px-8">
                 Request assistance and access emergency resources
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm text-gray-400">
-              <div className="flex items-start gap-2">
-                <span className="text-accent-red">•</span>
-                <span>Request immediate help for yourself or others</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-accent-red">•</span>
-                <span>View nearby emergency resources and shelters</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-accent-red">•</span>
-                <span>Track your help request status</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-accent-red">•</span>
-                <span>Receive critical alerts and updates</span>
-              </div>
-              <div className="mt-6">
-                <Button variant="glass" className="w-full card-victim-button text-white">
-                  Select as Victim
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+              </p>
+            </div>
+          </Button>
+        </Card>
 
-          {/* Responder Role */}
-          <Card className="glass-hover cursor-pointer group card-responder" onClick={() => onSelectRole('responder')}>
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-4 p-4 rounded-full card-responder-icon-bg group-hover:card-responder-icon-bg-hover transition-colors">
-                <HandHelping className="w-12 h-12 text-accent-green" />
+        {/* Responder Role */}
+        <Card className="flex-1 glass-hover cursor-pointer group card-responder overflow-hidden" onClick={() => onSelectRole('responder')}>
+          <Button className="w-full h-full p-6 md:p-8 lg:p-10">
+            <div className="flex flex-col items-center justify-center h-full w-full">
+              <div className="mb-6 md:mb-8 lg:mb-10 p-6 md:p-8 lg:p-12 rounded-full card-responder-icon-bg group-hover:card-responder-icon-bg-hover transition-colors shrink-0">
+                <HandHelping className="icon-responder" style={{ strokeWidth: '1.5px', color: '#00ff88' }} />
               </div>
-              <CardTitle className="text-2xl">I Want to Provide Help</CardTitle>
-              <CardDescription className="text-base">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold mb-4 md:mb-6 lg:mb-8 shrink-0">I Want to Help</h2>
+              <p className="text-lg md:text-xl lg:text-2xl xl:text-3xl text-gray-400 text-center whitespace-normal wrap-break-word max-w-2xl px-6 md:px-8">
                 Respond to requests and coordinate relief efforts
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm text-gray-400">
-              <div className="flex items-start gap-2">
-                <span className="text-accent-green">•</span>
-                <span>See all nearby help requests on the map</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-accent-green">•</span>
-                <span>Claim and respond to specific requests</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-accent-green">•</span>
-                <span>Filter by urgency and type of help needed</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-accent-green">•</span>
-                <span>Coordinate with emergency resources</span>
-              </div>
-              <div className="mt-6">
-                <Button variant="glass" className="w-full card-responder-button text-white">
-                  Select as Responder
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </p>
+            </div>
+          </Button>
+        </Card>
+      </div>
 
-        {/* Footer Info */}
-        <div className="text-center text-sm text-gray-500">
-          <p>Your selection will be saved and can be changed later in settings</p>
-        </div>
+      {/* Footer Info */}
+      <div className="text-center text-sm md:text-base lg:text-lg text-gray-500 py-4 shrink-0">
+        <p>We are here to help, but call 999 first.</p>
       </div>
     </div>
   );
