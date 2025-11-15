@@ -47,25 +47,25 @@ export function LeftPanel({ }: LeftPanelProps) {
             <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/5 via-transparent to-accent-purple/5 pointer-events-none" />
 
             <Tabs defaultValue="alerts" className="h-full flex flex-col p-6 relative z-10">
-              {/* Enhanced tab list with blue-purple gradient styling */}
-              <TabsList className="grid grid-cols-3 w-full bg-gradient-to-br from-slate-900/80 to-slate-800/60 border border-blue-500/20 p-1.5 rounded-2xl shadow-2xl backdrop-blur-sm">
+              {/* Enhanced tab list with better styling */}
+              <TabsList className="grid grid-cols-3 w-full bg-gradient-to-br from-background-elevated/60 to-background-elevated/40 border border-white/10 p-1.5 rounded-2xl shadow-xl backdrop-blur-sm">
                 <TabsTrigger
                   value="alerts"
-                  className="text-sm font-semibold text-slate-400 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-500/30 data-[state=active]:to-purple-500/20 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-blue-500/30 data-[state=active]:border data-[state=active]:border-blue-400/40 rounded-xl transition-all duration-300 hover:bg-blue-500/10 hover:text-blue-300"
+                  className="text-sm font-semibold data-[state=active]:bg-gradient-to-br data-[state=active]:from-accent-orange/30 data-[state=active]:to-accent-orange/15 data-[state=active]:text-accent-orange data-[state=active]:shadow-lg data-[state=active]:shadow-accent-orange/20 data-[state=active]:border data-[state=active]:border-accent-orange/40 rounded-xl transition-all duration-300 hover:bg-white/5"
                 >
                   <Bell className="w-4 h-4 mr-2" />
                   Alerts
                 </TabsTrigger>
                 <TabsTrigger
                   value="news"
-                  className="text-sm font-semibold text-slate-400 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-500/30 data-[state=active]:to-blue-500/20 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-purple-500/30 data-[state=active]:border data-[state=active]:border-purple-400/40 rounded-xl transition-all duration-300 hover:bg-purple-500/10 hover:text-purple-300"
+                  className="text-sm font-semibold data-[state=active]:bg-gradient-to-br data-[state=active]:from-accent-blue/30 data-[state=active]:to-accent-blue/15 data-[state=active]:text-accent-blue data-[state=active]:shadow-lg data-[state=active]:shadow-accent-blue/20 data-[state=active]:border data-[state=active]:border-accent-blue/40 rounded-xl transition-all duration-300 hover:bg-white/5"
                 >
                   <Newspaper className="w-4 h-4 mr-2" />
                   News
                 </TabsTrigger>
                 <TabsTrigger
                   value="resources"
-                  className="text-sm font-semibold text-slate-400 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-500/30 data-[state=active]:to-purple-500/20 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-blue-500/30 data-[state=active]:border data-[state=active]:border-blue-400/40 rounded-xl transition-all duration-300 hover:bg-blue-500/10 hover:text-blue-300"
+                  className="text-sm font-semibold data-[state=active]:bg-gradient-to-br data-[state=active]:from-accent-green/30 data-[state=active]:to-accent-green/15 data-[state=active]:text-accent-green data-[state=active]:shadow-lg data-[state=active]:shadow-accent-green/20 data-[state=active]:border data-[state=active]:border-accent-green/40 rounded-xl transition-all duration-300 hover:bg-white/5"
                 >
                   <MapPin className="w-4 h-4 mr-2" />
                   Resources
