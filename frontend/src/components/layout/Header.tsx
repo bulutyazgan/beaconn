@@ -1,14 +1,16 @@
-import type { UserRole } from '@/types';
-import { mockDisasterInfo } from '@/data/mock-disaster';
-import { Settings, Users, Heart } from 'lucide-react';
+import type { UserRole, DisasterInfo } from '@/types';
+import { Settings, Users, Heart, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { format } from 'date-fns';
 
 interface HeaderProps {
   role: UserRole;
+  disaster: DisasterInfo;
   onChangeRole: () => void;
+  onChangeDisaster: () => void;
 }
 
-export function Header({ role, onChangeRole }: HeaderProps) {
+export function Header({ role, disaster, onChangeRole, onChangeDisaster }: HeaderProps) {
   return (
     <header className="fixed top-0 left-0 right-0 z-40 glass border-b border-glass-border">
       <div className="flex items-center justify-between px-4 py-3">
@@ -21,12 +23,19 @@ export function Header({ role, onChangeRole }: HeaderProps) {
             <span className="font-bold text-lg hidden sm:inline">Emergency Response</span>
           </div>
 
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-background-elevated border border-glass-border">
+          <button
+            onClick={role === 'responder' ? onChangeDisaster : undefined}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-full bg-background-elevated border border-glass-border ${
+              role === 'responder' ? 'hover:border-accent-green/50 cursor-pointer' : ''
+            }`}
+            title={role === 'responder' ? 'Change disaster' : ''}
+          >
             <div className="w-2 h-2 bg-accent-red rounded-full animate-pulse" />
             <span className="text-xs sm:text-sm font-mono text-gray-300">
-              {mockDisasterInfo.name} • {mockDisasterInfo.date}
+              {disaster.name} • {format(disaster.date, 'MMM d')}
             </span>
-          </div>
+            {role === 'responder' && <MapPin className="w-3 h-3 text-gray-500" />}
+          </button>
         </div>
 
         {/* Right: Role Badge and Settings */}

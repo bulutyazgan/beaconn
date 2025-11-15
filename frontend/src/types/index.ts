@@ -75,8 +75,22 @@ export interface Alert {
 
 // Disaster Info
 export interface DisasterInfo {
+  id: string;
   name: string;
-  date: string;
+  type: 'earthquake' | 'hurricane' | 'tsunami' | 'flood';
+  date: Date;
   location: string;
+  center: Location;
   boundary?: Location[]; // Polygon points for disaster zone
+  severity: 'minor' | 'moderate' | 'severe' | 'catastrophic';
+  affectedRadius: number; // in kilometers
+  isActive: boolean;
+}
+
+// User's selected/subscribed disaster
+export interface UserDisasterSubscription {
+  userId: string;
+  disasterId: string;
+  subscribedAt: Date;
+  role: UserRole;
 }
