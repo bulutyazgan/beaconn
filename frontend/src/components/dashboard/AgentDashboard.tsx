@@ -36,19 +36,16 @@ export function AgentDashboard() {
   const fetchMetrics = async () => {
     try {
       const response = await fetch('http://localhost:8000/api/metrics?hours=24');
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
       const data = await response.json();
-      console.log('Metrics data received:', data); // Debug logging
+
+      // Calculate carbon footprint (approximate: 0.5g CO2 per 1000 tokens)
+      const carbonFootprint = (data.total_tokens / 1000) * 0.5;
 
       setMetrics({
         totalTokens: data.total_tokens || 0,
         avgLatency: data.avg_latency_seconds || 0,
         totalCost: data.cost_estimate_usd || 0,
-        carbonFootprint: data.carbon_footprint_grams || 0,
+        carbonFootprint: carbonFootprint,
         successRate: data.success_rate || 0,
         totalRuns: data.total_runs || 0,
       });
