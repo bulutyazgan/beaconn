@@ -1,4 +1,5 @@
-# Beaconn. The Civilian Emergency Response Coordination System
+# Beaconn. 
+## The Civilian Emergency Response Coordination System
 
 When emergency services are overwhelmed, volunteers can save countless lives. We help them find those in need, in real time, with case-specific guidance. 
 
