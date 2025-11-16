@@ -119,6 +119,23 @@ async def run_input_processing_agent(case_id: int) -> Dict:
         response.raise_for_status()
         result = response.json()
 
+        # Extract token usage for tracking
+        usage = result.get("usage", {})
+        input_tokens = usage.get("input_tokens", 0)
+        output_tokens = usage.get("output_tokens", 0)
+        total_tokens = input_tokens + output_tokens
+
+        # Log token usage to current run
+        run_tree = get_current_run_tree()
+        if run_tree:
+            run_tree.extra = run_tree.extra or {}
+            run_tree.extra["usage"] = {
+                "input_tokens": input_tokens,
+                "output_tokens": output_tokens,
+                "total_tokens": total_tokens
+            }
+            run_tree.end(outputs={"tokens": total_tokens})
+
         # Extract JSON from response
         raw_content = result.get("content", [])[0].get("text", "{}")
         try:
@@ -284,6 +301,22 @@ async def run_caller_pipeline(case_id: int) -> Dict:
         response.raise_for_status()
         result = response.json()
 
+        # Extract token usage for tracking
+        usage = result.get("usage", {})
+        input_tokens = usage.get("input_tokens", 0)
+        output_tokens = usage.get("output_tokens", 0)
+        total_tokens = input_tokens + output_tokens
+
+        # Log token usage to current run
+        run_tree = get_current_run_tree()
+        if run_tree:
+            run_tree.extra = run_tree.extra or {}
+            run_tree.extra["usage"] = {
+                "input_tokens": input_tokens,
+                "output_tokens": output_tokens,
+                "total_tokens": total_tokens
+            }
+
         guide_text = result.get("content", [])[0].get("text", "No guidance available.")
 
         # Save guide
@@ -411,6 +444,22 @@ async def run_helper_pipeline(assignment_id: int) -> Dict:
         response = await api_client.post(API_ENDPOINT, json=body)
         response.raise_for_status()
         result = response.json()
+
+        # Extract token usage for tracking
+        usage = result.get("usage", {})
+        input_tokens = usage.get("input_tokens", 0)
+        output_tokens = usage.get("output_tokens", 0)
+        total_tokens = input_tokens + output_tokens
+
+        # Log token usage to current run
+        run_tree = get_current_run_tree()
+        if run_tree:
+            run_tree.extra = run_tree.extra or {}
+            run_tree.extra["usage"] = {
+                "input_tokens": input_tokens,
+                "output_tokens": output_tokens,
+                "total_tokens": total_tokens
+            }
 
         guide_text = result.get("content", [])[0].get("text", "No guidance available.")
 

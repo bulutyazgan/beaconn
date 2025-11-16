@@ -637,14 +637,33 @@ async def get_metrics(hours: int = Query(1, ge=1, le=24)):
         failed = sum(1 for r in runs if r.status == "error")
         avg_latency = sum(r.latency or 0 for r in runs) / total_runs if total_runs > 0 else 0
 
-        # Token usage (if available in metadata)
+        # Token usage - check multiple locations where tokens might be stored
         total_tokens = 0
-        for r in runs:
-            if r.metadata and "token_usage" in r.metadata:
-                total_tokens += r.metadata["token_usage"]
+        input_tokens = 0
+        output_tokens = 0
 
-        # Calculate cost estimate (approximate for Claude 3.5 Haiku input tokens)
-        cost_estimate = (total_tokens / 1000) * 0.003
+        for r in runs:
+            # Check extra field (where we store usage from API)
+            if r.extra and "usage" in r.extra:
+                usage = r.extra["usage"]
+                total_tokens += usage.get("total_tokens", 0)
+                input_tokens += usage.get("input_tokens", 0)
+                output_tokens += usage.get("output_tokens", 0)
+            # Check metadata as fallback
+            elif r.metadata and "token_usage" in r.metadata:
+                total_tokens += r.metadata["token_usage"]
+            # Check outputs for token information
+            elif hasattr(r, 'outputs') and r.outputs and "tokens" in r.outputs:
+                total_tokens += r.outputs["tokens"]
+
+        # Calculate cost estimate
+        # Claude 3.5 Haiku: $0.80/MTok input, $4.00/MTok output
+        # Claude 3.5 Sonnet: $3.00/MTok input, $15.00/MTok output
+        # Using blended rate for now
+        cost_estimate = (input_tokens / 1_000_000) * 3.0 + (output_tokens / 1_000_000) * 15.0
+
+        # Calculate carbon footprint (rough estimate: ~0.5g CO2 per 1000 tokens)
+        carbon_footprint_g = (total_tokens / 1000) * 0.5
 
         logger.info(f"Metrics query: {total_runs} runs in {hours}h, {successful} successful")
 
@@ -656,8 +675,11 @@ async def get_metrics(hours: int = Query(1, ge=1, le=24)):
             "success_rate": successful / total_runs if total_runs > 0 else 0,
             "avg_latency_seconds": avg_latency,
             "total_tokens": total_tokens,
-            "cost_estimate_usd": round(cost_estimate, 4),
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+            "cost_estimate_usd": round(cost_estimate, 5),
             "cost_per_run_usd": round(cost_estimate / total_runs, 6) if total_runs > 0 else 0,
+            "carbon_footprint_grams": round(carbon_footprint_g, 2),
         }
     except Exception as e:
         logger.error(f"Metrics query failed: {e}")

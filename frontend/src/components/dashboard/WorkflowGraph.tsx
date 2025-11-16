@@ -76,23 +76,48 @@ export function WorkflowGraph({ runId, onClose }: WorkflowGraphProps) {
 
       const data = await response.json();
 
-      // Convert to React Flow format
-      const flowNodes: FlowNode[] = data.nodes.map((node: any, index: number) => ({
-        id: node.id,
-        type: 'custom',
-        position: {
-          x: index === 0 ? 300 : 100 + (index % 3) * 250,
-          y: index === 0 ? 50 : 150 + Math.floor((index - 1) / 3) * 120,
-        },
-        data: {
-          label: node.label,
-          type: node.type,
-          status: node.status,
-          latency_ms: node.latency_ms,
-          inputs: node.inputs,
-          outputs: node.outputs,
-        },
-      }));
+      // Convert to React Flow format with better layout
+      const flowNodes: FlowNode[] = data.nodes.map((node: any, index: number) => {
+        // Root node at top center
+        if (index === 0) {
+          return {
+            id: node.id,
+            type: 'custom',
+            position: { x: 400, y: 50 },
+            data: {
+              label: node.label,
+              type: node.type,
+              status: node.status,
+              latency_ms: node.latency_ms,
+              inputs: node.inputs,
+              outputs: node.outputs,
+            },
+          };
+        }
+
+        // Arrange child nodes in a grid below
+        const childIndex = index - 1;
+        const columns = 3;
+        const col = childIndex % columns;
+        const row = Math.floor(childIndex / columns);
+
+        return {
+          id: node.id,
+          type: 'custom',
+          position: {
+            x: 100 + col * 300,
+            y: 200 + row * 150,
+          },
+          data: {
+            label: node.label,
+            type: node.type,
+            status: node.status,
+            latency_ms: node.latency_ms,
+            inputs: node.inputs,
+            outputs: node.outputs,
+          },
+        };
+      });
 
       const flowEdges: FlowEdge[] = data.edges.map((edge: any) => ({
         id: edge.id,
@@ -133,14 +158,31 @@ export function WorkflowGraph({ runId, onClose }: WorkflowGraphProps) {
         )}
       </div>
 
-      <div className="h-[500px] bg-neutral-900">
+      <div className="h-[600px] bg-neutral-900">
         {loading ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-neutral-500">Loading workflow graph...</div>
+          <div className="flex flex-col items-center justify-center h-full gap-3">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <div className="text-neutral-400 text-sm">Loading workflow graph...</div>
           </div>
         ) : error ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-red-400">Error: {error}</div>
+          <div className="flex flex-col items-center justify-center h-full gap-3">
+            <div className="text-red-400 text-lg">⚠ Error Loading Graph</div>
+            <div className="text-neutral-500 text-sm">{error}</div>
+            <button
+              onClick={() => {
+                setLoading(true);
+                setError(null);
+                fetchWorkflowGraph();
+              }}
+              className="px-4 py-2 glass hover:bg-white/10 rounded-lg transition-colors text-sm"
+            >
+              Retry
+            </button>
+          </div>
+        ) : nodes.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full gap-3">
+            <div className="text-neutral-400">No workflow data available</div>
+            <div className="text-neutral-600 text-sm">This run may not have completed yet</div>
           </div>
         ) : (
           <ReactFlow
