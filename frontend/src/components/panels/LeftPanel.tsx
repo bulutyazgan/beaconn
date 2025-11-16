@@ -1,15 +1,17 @@
 import { useState } from 'react';
-import type { UserRole, Location } from '@/types';
+import type { UserRole, Location, HelpRequest } from '@/types';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { HelpRequestList } from './HelpRequestList';
 
 interface LeftPanelProps {
   role: UserRole;
-  onHelpRequestClick?: (location: Location) => void;
+  helpRequests?: HelpRequest[];
+  onHelpRequestClick?: (request: HelpRequest) => void;
+  onLocationClick?: (location: Location) => void;
 }
 
-export function LeftPanel({ onHelpRequestClick }: LeftPanelProps) {
+export function LeftPanel({ helpRequests, onHelpRequestClick, onLocationClick }: LeftPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -47,7 +49,11 @@ export function LeftPanel({ onHelpRequestClick }: LeftPanelProps) {
             <div className="h-full flex flex-col p-6 relative z-10">
               {/* Scrollable content area */}
               <div className="flex-1 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-white/5 hover:scrollbar-thumb-white/30">
-                <HelpRequestList onHelpRequestClick={onHelpRequestClick} />
+                <HelpRequestList
+                  helpRequests={helpRequests}
+                  onHelpRequestClick={onHelpRequestClick}
+                  onLocationClick={onLocationClick}
+                />
               </div>
             </div>
           </div>

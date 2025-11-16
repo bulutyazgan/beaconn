@@ -9,12 +9,13 @@ import {
   Clock,
   MapPin
 } from 'lucide-react';
-import { mockHelpRequests } from '@/data/mock-help-requests';
-import type { HelpRequestType, Urgency, Location } from '@/types';
+import type { HelpRequestType, Urgency, Location, HelpRequest } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 
 interface HelpRequestListProps {
-  onHelpRequestClick?: (location: Location) => void;
+  helpRequests?: HelpRequest[];
+  onHelpRequestClick?: (request: HelpRequest) => void;
+  onLocationClick?: (location: Location) => void;
 }
 
 // Icon mapping for help request types
@@ -69,9 +70,9 @@ const typeColors: Record<HelpRequestType, string> = {
   other: 'text-gray-400',
 };
 
-export function HelpRequestList({ onHelpRequestClick }: HelpRequestListProps) {
+export function HelpRequestList({ helpRequests = [], onHelpRequestClick, onLocationClick }: HelpRequestListProps) {
   // Filter to show only pending requests
-  const pendingRequests = mockHelpRequests
+  const pendingRequests = helpRequests
     .filter(req => req.status === 'pending')
     .sort((a, b) => {
       // Sort by urgency (critical > high > medium > low)
@@ -112,7 +113,10 @@ export function HelpRequestList({ onHelpRequestClick }: HelpRequestListProps) {
             return (
               <div
                 key={request.id}
-                onClick={() => onHelpRequestClick?.(request.location)}
+                onClick={() => {
+                  onHelpRequestClick?.(request);
+                  onLocationClick?.(request.location);
+                }}
                 className={`relative group overflow-hidden rounded-xl border ${colors.border} bg-gradient-to-br ${colors.bg} backdrop-blur-sm shadow-lg ${colors.glow} hover:shadow-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer`}
               >
                 {/* Urgency indicator bar */}

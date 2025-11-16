@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { X, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { X, Loader2, CheckCircle2, AlertCircle, Shield } from 'lucide-react';
 import { getCallerGuide, type CallerGuide } from '@/services/api';
 
 interface CallerGuideDialogProps {
@@ -62,9 +62,12 @@ export function CallerGuideDialog({ caseId, onClose }: CallerGuideDialogProps) {
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/10">
           <div>
-            <h2 className="text-xl font-bold text-white">Safety Guidance</h2>
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <Shield className="w-6 h-6 text-blue-400" />
+              Hero Agent Recommendations
+            </h2>
             <p className="text-sm text-gray-400 mt-1">
-              AI-generated safety instructions for your situation
+              Safety instructions for your situation
             </p>
           </div>
           <button
@@ -81,10 +84,10 @@ export function CallerGuideDialog({ caseId, onClose }: CallerGuideDialogProps) {
             <div className="flex flex-col items-center justify-center py-12">
               <Loader2 className="w-12 h-12 text-blue-400 animate-spin mb-4" />
               <p className="text-white font-medium mb-2">
-                AI is analyzing your situation...
+                Hero Agent is analyzing your situation...
               </p>
               <p className="text-gray-400 text-sm text-center max-w-md">
-                Our emergency AI is generating personalized safety guidance based on your location and description.
+                Hero Agent is generating personalized safety guidance based on your location and description.
                 This usually takes 5-10 seconds.
               </p>
               <div className="mt-4 flex gap-2">

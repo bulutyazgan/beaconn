@@ -165,13 +165,28 @@ def create_assignment(
         # Create assignment
         cursor.execute(
             """
-            INSERT INTO assignments (case_id, helper_user_id, notes)
-            VALUES (%s, %s, %s)
-            RETURNING id, case_id, helper_user_id, assigned_at, completed_at, notes, outcome
+            INSERT INTO assignments (case_id, helper_user_id)
+            VALUES (%s, %s)
+            RETURNING id, case_id, helper_user_id, assigned_at, completed_at, outcome
             """,
-            (case_id, helper_user_id, notes)
+            (case_id, helper_user_id)
         )
         assignment = cursor.fetchone()
+
+        # If notes were provided, add them to the updates table instead
+        if notes:
+            cursor.execute(
+                """
+                INSERT INTO updates (
+                    case_id,
+                    assignment_id,
+                    update_source,
+                    update_text
+                )
+                VALUES (%s, %s, 'assignment_notes', %s)
+                """,
+                (case_id, assignment['id'], notes)
+            )
 
         # Update case status to 'assigned' if it was 'open'
         if case['status'] == 'open':
@@ -219,7 +234,6 @@ def create_assignment(
             "helper_user_id": assignment['helper_user_id'],
             "assigned_at": assignment['assigned_at'].isoformat() if assignment['assigned_at'] else None,
             "completed_at": assignment['completed_at'].isoformat() if assignment['completed_at'] else None,
-            "notes": assignment['notes'],
             "outcome": assignment['outcome'],
             "guide_generation_started": True
         }

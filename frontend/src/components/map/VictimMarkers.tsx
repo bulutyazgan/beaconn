@@ -23,13 +23,34 @@ const getMarkerColor = (urgency: string): string => {
   }
 };
 
+// Helper function to add periodic bounce animation to critical markers
+const addPeriodicBounce = (marker: any) => {
+  const bounce = () => {
+    marker.setAnimation(window.google.maps.Animation.BOUNCE);
+    // Stop bouncing after 1 second (3 bounces)
+    setTimeout(() => {
+      marker.setAnimation(null);
+    }, 1000);
+  };
+
+  // Bounce immediately
+  bounce();
+
+  // Then bounce every 5 seconds
+  const interval = setInterval(bounce, 5000);
+
+  // Return cleanup function
+  return () => clearInterval(interval);
+};
+
 export function VictimMarkers({ map, helpRequests, onMarkerClick }: VictimMarkersProps) {
   useEffect(() => {
     if (!map || !window.google) return;
 
-    // Store markers and info windows so we can clean them up
+    // Store markers, info windows, and animation cleanup functions
     const markers: any[] = [];
     const infoWindows: any[] = [];
+    const cleanupFunctions: (() => void)[] = [];
 
     // Add a marker for each help request
     helpRequests.forEach((request) => {
@@ -45,8 +66,15 @@ export function VictimMarkers({ map, helpRequests, onMarkerClick }: VictimMarker
           strokeWeight: 2,
           scale: request.urgency === 'critical' ? 12 : 8,
         },
-        animation: request.urgency === 'critical' ? window.google.maps.Animation.BOUNCE : undefined,
+        // No constant animation - we'll add periodic bounce for critical markers
+        animation: undefined,
       });
+
+      // Add periodic bounce animation for critical urgency markers
+      if (request.urgency === 'critical') {
+        const cleanup = addPeriodicBounce(marker);
+        cleanupFunctions.push(cleanup);
+      }
 
       // Create info window with detailed information - modern glassmorphic design
       const urgencyColor = getMarkerColor(request.urgency);
@@ -225,10 +253,11 @@ export function VictimMarkers({ map, helpRequests, onMarkerClick }: VictimMarker
       infoWindows.push(infoWindow);
     });
 
-    // Cleanup function to remove markers and info windows when component unmounts or dependencies change
+    // Cleanup function to remove markers, info windows, and animation intervals when component unmounts or dependencies change
     return () => {
       markers.forEach((marker) => marker.setMap(null));
       infoWindows.forEach((infoWindow) => infoWindow.close());
+      cleanupFunctions.forEach((cleanup) => cleanup());
     };
   }, [map, helpRequests, onMarkerClick]);
 

@@ -5,10 +5,13 @@ import { Header } from './Header';
 import { MapContainer } from '@/components/map/MapContainer';
 import { LeftPanel } from '@/components/panels/LeftPanel';
 import { MyCasePanel } from '@/components/panels/MyCasePanel';
-import { RequestHelpFAB } from './RequestHelpFAB';
+import { MyAssignmentPanel } from '@/components/panels/MyAssignmentPanel';
 import { RequestHelpDialog } from './RequestHelpDialog';
 import { CallerGuideDialog } from './CallerGuideDialog';
-import { getNearbyCases, type Case } from '@/services/api';
+import { CaseDetailsDialog } from './CaseDetailsDialog';
+import { getNearbyCases, type Case, createAssignment, getNearbyHelpers } from '@/services/api';
+import { toast } from 'sonner';
+import type { Helper } from '@/components/map/HelperMarkers';
 
 interface DashboardProps {
   role: UserRole;
@@ -56,7 +59,9 @@ export function Dashboard({ role, disaster, onChangeRole }: DashboardProps) {
   // State for dialog visibility
   const [showRequestHelpDialog, setShowRequestHelpDialog] = useState(false);
   const [showCallerGuideDialog, setShowCallerGuideDialog] = useState(false);
+  const [showCaseDetailsDialog, setShowCaseDetailsDialog] = useState(false);
   const [currentCaseId, setCurrentCaseId] = useState<number | null>(null);
+  const [selectedHelpRequest, setSelectedHelpRequest] = useState<HelpRequest | null>(null);
 
   // State for victim's own case (from localStorage)
   const [myCaseId, setMyCaseId] = useState<number | null>(() => {
@@ -64,9 +69,19 @@ export function Dashboard({ role, disaster, onChangeRole }: DashboardProps) {
     return stored ? parseInt(stored) : null;
   });
 
+  // State for helper's active assignment (from localStorage)
+  const [myAssignmentId, setMyAssignmentId] = useState<number | null>(() => {
+    const stored = localStorage.getItem('last_assignment_id');
+    return stored ? parseInt(stored) : null;
+  });
+
   // State for help requests from API
   const [helpRequests, setHelpRequests] = useState<HelpRequest[]>([]);
   const [loadingCases, setLoadingCases] = useState(false);
+
+  // State for nearby helpers from API (only for helpers to see)
+  const [nearbyHelpers, setNearbyHelpers] = useState<Helper[]>([]);
+  const [loadingHelpers, setLoadingHelpers] = useState(false);
 
   // Update map center when user location changes (but only initially)
   useEffect(() => {
@@ -106,6 +121,35 @@ export function Dashboard({ role, disaster, onChangeRole }: DashboardProps) {
     return () => clearInterval(interval);
   }, [location]);
 
+  // Fetch nearby helpers (only for responders)
+  useEffect(() => {
+    if (!location || role !== 'responder') return;
+
+    const fetchHelpers = async () => {
+      setLoadingHelpers(true);
+      try {
+        const helpers = await getNearbyHelpers(
+          location.lat,
+          location.lng,
+          15 // 15km radius
+        );
+
+        setNearbyHelpers(helpers);
+
+      } catch (error) {
+        console.error('Failed to fetch nearby helpers:', error);
+      } finally {
+        setLoadingHelpers(false);
+      }
+    };
+
+    fetchHelpers();
+
+    // Poll every 15 seconds for updates (less frequent than cases)
+    const interval = setInterval(fetchHelpers, 15000);
+    return () => clearInterval(interval);
+  }, [location, role]);
+
   const handleRequestHelp = () => {
     setShowRequestHelpDialog(true);
   };
@@ -134,14 +178,56 @@ export function Dashboard({ role, disaster, onChangeRole }: DashboardProps) {
     });
   };
 
-  const handleMarkerClick = (request: any) => {
-    console.log('Victim marker clicked:', request);
-    // TODO: Show help request details dialog
+  const handleMarkerClick = (request: HelpRequest) => {
+    console.log('Marker clicked:', request);
+    if (role === 'responder') {
+      setSelectedHelpRequest(request);
+      setShowCaseDetailsDialog(true);
+    }
+  };
+
+  const handleClaimCase = async (caseId: string) => {
+    const userId = localStorage.getItem('beacon_user_id');
+    if (!userId) {
+      throw new Error('User not registered. Please refresh the page.');
+    }
+
+    const assignment = await createAssignment({
+      case_id: parseInt(caseId),
+      helper_user_id: parseInt(userId),
+    });
+
+    // Store assignment ID in localStorage
+    localStorage.setItem('last_assignment_id', assignment.assignment_id.toString());
+    setMyAssignmentId(assignment.assignment_id);
+
+    // Refresh cases to update status
+    if (location) {
+      const cases = await getNearbyCases(
+        location.lat,
+        location.lng,
+        10,
+        ['open', 'assigned']
+      );
+      const mapped = cases.map(mapCaseToHelpRequest);
+      setHelpRequests(mapped);
+    }
   };
 
   // Handler for when a help request is clicked from the left panel
-  const handleHelpRequestClick = (requestLocation: Location) => {
-    setMapCenter(requestLocation);
+  const handleSidebarRequestClick = (request: HelpRequest) => {
+    // For responders, show the case details dialog
+    if (role === 'responder') {
+      setSelectedHelpRequest(request);
+      setShowCaseDetailsDialog(true);
+    }
+    // Center map on the request location
+    setMapCenter(request.location);
+  };
+
+  // Handler for centering map on a location
+  const handleLocationClick = (location: Location) => {
+    setMapCenter(location);
   };
 
   if (loading && !location) {
@@ -163,26 +249,35 @@ export function Dashboard({ role, disaster, onChangeRole }: DashboardProps) {
         onChangeRole={onChangeRole}
       />
 
-      {/* Left Panel - Show MyCasePanel for victims with active case, otherwise show LeftPanel */}
+      {/* MyCasePanel for victims with active case - includes its own map */}
       {role === 'victim' && myCaseId ? (
         <MyCasePanel caseId={myCaseId} />
+      ) : role === 'responder' && myAssignmentId ? (
+        /* MyAssignmentPanel for helpers with active assignment - includes its own map */
+        <MyAssignmentPanel assignmentId={myAssignmentId} />
       ) : (
-        <LeftPanel role={role} onHelpRequestClick={handleHelpRequestClick} />
+        <>
+          {/* Left Panel for responders and victims without cases */}
+          <LeftPanel
+            role={role}
+            helpRequests={helpRequests}
+            onHelpRequestClick={handleSidebarRequestClick}
+            onLocationClick={handleLocationClick}
+          />
+
+          {/* Map Container */}
+          <div className="pt-16 h-screen">
+            <MapContainer
+              center={mapCenter}
+              zoom={role === 'victim' ? 16 : 13}
+              helpRequests={helpRequests}
+              helpers={role === 'responder' ? nearbyHelpers : []}
+              userLocation={location}
+              onMarkerClick={handleMarkerClick}
+            />
+          </div>
+        </>
       )}
-
-      {/* Map Container */}
-      <div className="pt-16 h-screen">
-        <MapContainer
-          center={mapCenter}
-          zoom={role === 'victim' ? 16 : 13}
-          helpRequests={helpRequests}
-          userLocation={location}
-          onMarkerClick={handleMarkerClick}
-        />
-      </div>
-
-      {/* Request Help FAB (only for victims) */}
-      {role === 'victim' && <RequestHelpFAB onClick={handleRequestHelp} />}
 
       {/* Request Help Dialog */}
       {role === 'victim' && (
@@ -203,6 +298,18 @@ export function Dashboard({ role, disaster, onChangeRole }: DashboardProps) {
             setShowCallerGuideDialog(false);
             setCurrentCaseId(null);
           }}
+        />
+      )}
+
+      {/* Case Details Dialog (Responders only) */}
+      {showCaseDetailsDialog && selectedHelpRequest && role === 'responder' && (
+        <CaseDetailsDialog
+          helpRequest={selectedHelpRequest}
+          onClose={() => {
+            setShowCaseDetailsDialog(false);
+            setSelectedHelpRequest(null);
+          }}
+          onClaim={handleClaimCase}
         />
       )}
     </div>

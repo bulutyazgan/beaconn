@@ -3,6 +3,7 @@ import { setOptions, importLibrary } from '@googlemaps/js-api-loader';
 import type { Location, HelpRequest } from '@/types';
 import { defaultMapOptions } from '@/styles/map-theme';
 import { VictimMarkers } from './VictimMarkers';
+import { HelperMarkers, type Helper } from './HelperMarkers';
 import { HeatmapLayer } from './HeatmapLayer';
 import { HeatmapToggle } from './HeatmapToggle';
 import { UserLocationMarker } from './UserLocationMarker';
@@ -11,9 +12,11 @@ interface MapContainerProps {
   center: Location;
   zoom?: number;
   helpRequests?: HelpRequest[];
+  helpers?: Helper[];
   userLocation?: Location | null;
   onMapLoad?: (map: any) => void;
   onMarkerClick?: (request: HelpRequest) => void;
+  onHelperClick?: (helper: Helper) => void;
 }
 
 // Get API key from environment
@@ -22,7 +25,7 @@ const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string;
 // Flag to track if setOptions has been called
 let optionsConfigured = false;
 
-export function MapContainer({ center, zoom = 15, helpRequests = [], userLocation, onMapLoad, onMarkerClick }: MapContainerProps) {
+export function MapContainer({ center, zoom = 15, helpRequests = [], helpers = [], userLocation, onMapLoad, onMarkerClick, onHelperClick }: MapContainerProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -100,6 +103,13 @@ export function MapContainer({ center, zoom = 15, helpRequests = [], userLocatio
         map={map}
         helpRequests={helpRequests}
         onMarkerClick={onMarkerClick}
+      />
+
+      {/* Helper markers */}
+      <HelperMarkers
+        map={map}
+        helpers={helpers}
+        onHelperClick={onHelperClick}
       />
 
       {/* Heatmap layer */}

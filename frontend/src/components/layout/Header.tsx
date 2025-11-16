@@ -1,5 +1,5 @@
 import type { UserRole, DisasterInfo } from '@/types';
-import { Settings, Users, Heart, MapPin } from 'lucide-react';
+import { Settings, Users, Heart, MapPin, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 
@@ -10,6 +10,15 @@ interface HeaderProps {
 }
 
 export function Header({ role, disaster, onChangeRole }: HeaderProps) {
+  const handleReset = () => {
+    if (confirm('Reset all data? This will clear your case/assignment and reload the page.')) {
+      localStorage.removeItem('last_case_id');
+      localStorage.removeItem('last_assignment_id');
+      localStorage.removeItem('beacon_user_id');
+      window.location.reload();
+    }
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-40 glass border-b border-white/5 backdrop-blur-xl">
       <div className="flex items-center justify-between px-6 py-4">
@@ -53,6 +62,17 @@ export function Header({ role, disaster, onChangeRole }: HeaderProps) {
               {role}
             </span>
           </div>
+
+          {/* Reset Button (for testing) */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleReset}
+            title="Reset All Data (Testing)"
+            className="hover:bg-white/5 transition-all duration-200 hover:scale-105"
+          >
+            <RotateCcw className="w-5 h-5 text-orange-400 hover:text-orange-300 transition-colors" />
+          </Button>
 
           {/* Settings Button */}
           <Button
