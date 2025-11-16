@@ -74,14 +74,23 @@ function App() {
       const lat = location?.lat || 51.5074;
       const lng = location?.lng || -0.1278;
 
-      // Register user with backend
-      await registerUser(selectedRole, lat, lng);
+      // Register user with backend (with timeout)
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Registration timeout')), 10000)
+      );
+
+      await Promise.race([
+        registerUser(selectedRole, lat, lng),
+        timeoutPromise
+      ]);
 
       // Update local role state
       selectRole(selectedRole);
 
     } catch (error) {
       console.error('Failed to register user:', error);
+      // Still set the role even if registration fails so user can proceed
+      selectRole(selectedRole);
     } finally {
       setIsRegistering(false);
     }
