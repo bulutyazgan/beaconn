@@ -1,16 +1,31 @@
+import os
 import json
+import logging
 from typing import Literal
+
+# LangSmith setup (must be before imports)
+os.environ["LANGSMITH_TRACING"] = "true"
+os.environ["LANGSMITH_ENDPOINT"] = "https://api.smith.langchain.com"
 
 from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
+from langsmith import Client, traceable
 
 # --- 1. Import from our other files ---
-from main import get_api_session, API_ENDPOINT, MODELS, TEAM_ID, API_TOKEN
+from main import get_api_session, API_ENDPOINT, MODELS, TEAM_ID, API_TOKEN, LANGSMITH_PROJECT
 from agent_state import AgentState
 import agent_tools
 
+# Setup logging for audit trail
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("beacon_agents")
+
 api_client = get_api_session()
 model_id = MODELS["recommended"]
+fast_model_id = MODELS["fast"]
+
+# Initialize LangSmith client for metadata/feedback
+ls_client = Client()
 
 # Initialize workflow
 workflow = StateGraph(AgentState)

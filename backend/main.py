@@ -13,6 +13,11 @@ API_TOKEN = os.getenv("API_TOKEN")
 # The main endpoint for all requests
 API_ENDPOINT = "https://ctwa92wg1b.execute-api.us-east-1.amazonaws.com/prod/invoke"
 
+# LANG SMITH !!!!
+# LangSmith observability
+LANGSMITH_API_KEY = os.getenv("LANGSMITH_API_KEY")
+LANGSMITH_PROJECT = os.getenv("LANGSMITH_PROJECT", "beacon-demo")
+
 # A dictionary of recommended models for easy switching
 MODELS = {
     "recommended": "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
