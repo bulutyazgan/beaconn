@@ -4,9 +4,21 @@ import logging
 import time
 from typing import Literal
 
+# Setup logging for audit trail
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("beacon_agents")
+
 # LangSmith setup (must be before imports)
-os.environ["LANGSMITH_TRACING"] = "true"
-os.environ["LANGSMITH_ENDPOINT"] = "https://api.smith.langchain.com"
+# Check if LangSmith is configured
+LANGSMITH_API_KEY = os.getenv("LANGSMITH_API_KEY")
+if LANGSMITH_API_KEY:
+    os.environ["LANGSMITH_TRACING"] = "true"
+    os.environ["LANGSMITH_ENDPOINT"] = "https://api.smith.langchain.com"
+    logger.info("LangSmith tracing enabled")
+else:
+    logger.warning("LANGSMITH_API_KEY not set. Tracing will not be recorded.")
+    os.environ["LANGSMITH_TRACING"] = "false"
+
 
 from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
@@ -17,9 +29,6 @@ from main import get_api_session, API_ENDPOINT, MODELS, TEAM_ID, API_TOKEN, LANG
 from agent_state import AgentState
 import agent_tools
 
-# Setup logging for audit trail
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("beacon_agents")
 
 api_client = get_api_session()
 model_id = MODELS["recommended"]
@@ -175,7 +184,10 @@ def case_group_manager_agent(state: AgentState):
         logger.error(f"case_group_manager_agent failed: {e}")
         elapsed = time.time() - start_time
         logger.info(f"case_group_manager_agent completed (with error) in {elapsed:.3f}s")
-        raise
+        return {
+        "messages": [{"role": "assistant", "content": f"Grouping check skipped: {str(e)}"}],
+        "case_group_update": {"error": str(e), "group_created": False}
+        }
 
 # --- Helper function for conditional routing ---
 def should_continue(state: AgentState):
@@ -202,17 +214,18 @@ workflow.set_entry_point("intake_agent")
 
 # Add routing logic (this can be customized based on your needs)
 # Example: After intake, could route to case_group_manager or end
-# workflow.add_conditional_edges(
-#     "intake_agent",
-#     coordinator,
-#     {"case_group_manager": "case_group_manager", END: END}
-# )
-# workflow.add_edge("case_group_manager", END)
+workflow.add_conditional_edges(
+    "intake_agent",
+    coordinator,
+    {"case_group_manager": "case_group_manager", END: END}
+)
+workflow.add_edge("case_group_manager", END)
 
 # --- Helper Tools Integration (from helperAgents) ---
 # Expose a ready-to-use ToolNode so agent chains can call Valyu DeepSearch.
 tool_node = ToolNode(agent_tools.AVAILABLE_TOOLS)
 
+app = workflow.compile()
 
 def build_search_graph():
     """Simple graph that just routes requests straight to the tool suite."""
