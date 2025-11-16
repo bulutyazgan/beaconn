@@ -7,6 +7,7 @@ import { useUserIdentity } from '@/hooks/useUserIdentity';
 import { RoleSelection } from '@/components/role/RoleSelection';
 import { Dashboard } from '@/components/layout/Dashboard';
 import { RequestHelpDialog } from '@/components/layout/RequestHelpDialog';
+import { CallerGuideDialog } from '@/components/layout/CallerGuideDialog';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 
@@ -19,6 +20,8 @@ function App() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [showInitialHelpDialog, setShowInitialHelpDialog] = useState(false);
   const [pendingRole, setPendingRole] = useState<UserRole | null>(null);
+  const [showCallerGuideDialog, setShowCallerGuideDialog] = useState(false);
+  const [currentCaseId, setCurrentCaseId] = useState<number | null>(null);
 
   const handleRoleSelect = async (selectedRole: UserRole) => {
     // If victim is selected, register user FIRST, then show dialog
@@ -59,11 +62,19 @@ function App() {
   };
 
   const handleInitialHelpSubmitted = async (caseId: number) => {
-    // After submitting the help request, close dialog and let them see dashboard
+    // After submitting the help request, store case ID and show caller guide
     console.log('Help request submitted with case ID:', caseId);
+
+    // Store case ID in localStorage
+    localStorage.setItem('last_case_id', caseId.toString());
+
+    // Close help dialog
     setShowInitialHelpDialog(false);
     setPendingRole(null);
-    // The user is already registered, so hasRole will be true and they'll see the dashboard
+
+    // Show caller guide dialog
+    setCurrentCaseId(caseId);
+    setShowCallerGuideDialog(true);
   };
 
   const handleInitialDialogClose = () => {
@@ -120,6 +131,22 @@ function App() {
           onSubmitSuccess={handleInitialHelpSubmitted}
           userLocation={location}
           disaster={tempDisaster}
+        />
+      </>
+    );
+  }
+
+  // Show caller guide dialog after initial help request submission
+  if (hasRole && showCallerGuideDialog && currentCaseId) {
+    return (
+      <>
+        <CallerGuideDialog
+          caseId={currentCaseId}
+          onClose={() => {
+            setShowCallerGuideDialog(false);
+            setCurrentCaseId(null);
+            // User will now see the dashboard
+          }}
         />
       </>
     );

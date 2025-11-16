@@ -352,20 +352,60 @@ export function VictimMarkers({ map, helpRequests, onMarkerClick }: VictimMarker
               </div>
             ` : ''}
 
-            <!-- Description -->
+            <!-- User's Original Description -->
             <div style="
               background: rgba(196, 181, 163, 0.05);
               border: 1px solid rgba(196, 181, 163, 0.1);
               border-radius: 8px;
               padding: 10px 12px;
-              margin-bottom: 12px;
+              margin-bottom: ${request.aiReasoning ? '8px' : '12px'};
             ">
+              <div style="
+                font-size: 10px;
+                color: #A69583;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 6px;
+              ">User's Report</div>
               <div style="
                 font-size: 13px;
                 color: #D9CFC0;
                 line-height: 1.5;
               ">${request.description}</div>
             </div>
+
+            ${request.aiReasoning ? `
+              <!-- AI Assessment -->
+              <div style="
+                background: linear-gradient(135deg, ${urgencyColor}15 0%, ${urgencyColor}08 100%);
+                border: 1px solid ${urgencyColor}25;
+                border-left: 3px solid ${urgencyColor};
+                border-radius: 8px;
+                padding: 10px 12px;
+                margin-bottom: 12px;
+              ">
+                <div style="
+                  font-size: 10px;
+                  color: ${urgencyColor};
+                  font-weight: 700;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                  margin-bottom: 6px;
+                  display: flex;
+                  align-items: center;
+                  gap: 4px;
+                ">
+                  <span style="font-size: 12px;">🤖</span> AI Analysis
+                </div>
+                <div style="
+                  font-size: 12px;
+                  color: #D9CFC0;
+                  line-height: 1.6;
+                  font-style: italic;
+                ">${request.aiReasoning}</div>
+              </div>
+            ` : ''}
 
             <!-- Timestamp -->
             <div style="

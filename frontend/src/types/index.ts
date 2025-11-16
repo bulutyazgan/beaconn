@@ -38,6 +38,7 @@ export interface HelpRequest {
   location: Location;
   peopleCount: number;
   description: string;
+  aiReasoning?: string; // AI's explanation of urgency/danger assessment
   createdAt: Date;
   status: HelpRequestStatus;
   claimedBy?: string; // ID of responder who claimed this request

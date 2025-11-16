@@ -74,6 +74,7 @@ export interface Case {
   vulnerability_factors: string[];
   urgency: 'low' | 'medium' | 'high' | 'critical';
   danger_level: 'safe' | 'moderate' | 'severe' | 'life_threatening';
+  ai_reasoning: string | null;
   status: string;
   created_at: string;
   resolved_at: string | null;

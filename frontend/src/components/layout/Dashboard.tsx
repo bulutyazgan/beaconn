@@ -47,6 +47,7 @@ function mapCaseToHelpRequest(apiCase: Case): HelpRequest {
     urgency: apiCase.urgency,
     status,
     description: apiCase.description || apiCase.raw_problem_description,
+    aiReasoning: apiCase.ai_reasoning || undefined,
     createdAt: new Date(apiCase.created_at),
     vulnerabilityFactors: apiCase.vulnerability_factors || [],
     mobilityStatus: apiCase.mobility_status || undefined,
@@ -188,6 +189,9 @@ export function Dashboard({ role, disaster, onChangeRole }: DashboardProps) {
   const handleRequestSubmitted = (caseId: number) => {
     // Store the case ID for the victim
     setMyCaseId(caseId);
+
+    // Close the request help dialog
+    setShowRequestHelpDialog(false);
 
     // Show the caller guide dialog
     setCurrentCaseId(caseId);

@@ -95,12 +95,13 @@ export function RequestHelpDialog({
       });
       setErrors({});
 
-      onClose();
-
-      // Trigger refresh callback with case_id
+      // Trigger refresh callback with case_id FIRST
       if (onSubmitSuccess) {
         onSubmitSuccess(response.case_id);
       }
+
+      // Note: Don't call onClose() here - let the parent component handle it
+      // This prevents clearing the role before showing CallerGuideDialog
 
     } catch (error) {
       console.error('Failed to submit help request:', error);
