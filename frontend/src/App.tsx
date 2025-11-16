@@ -5,6 +5,8 @@ import { useGeolocation } from '@/hooks/useGeolocation';
 import { useDisasterSelection } from '@/hooks/useDisasterSelection';
 import { useUserIdentity } from '@/hooks/useUserIdentity';
 import { RoleSelection } from '@/components/role/RoleSelection';
+import { VoiceSelectionDialog } from '@/components/role/VoiceSelectionDialog';
+import { VoiceConversationScreen } from '@/components/voice/VoiceConversationScreen';
 import { Dashboard } from '@/components/layout/Dashboard';
 import { RequestHelpDialog } from '@/components/layout/RequestHelpDialog';
 import { CallerGuideDialog } from '@/components/layout/CallerGuideDialog';
@@ -18,26 +20,42 @@ function App() {
   const { registerUser, clearIdentity, isLoading: isRegisteringUser } = useUserIdentity();
 
   const [isRegistering, setIsRegistering] = useState(false);
+  const [showVoiceSelection, setShowVoiceSelection] = useState(false);
+  const [useVoiceMode, setUseVoiceMode] = useState(false);
+  const [showVoiceConversation, setShowVoiceConversation] = useState(false);
   const [showInitialHelpDialog, setShowInitialHelpDialog] = useState(false);
   const [pendingRole, setPendingRole] = useState<UserRole | null>(null);
   const [showCallerGuideDialog, setShowCallerGuideDialog] = useState(false);
   const [currentCaseId, setCurrentCaseId] = useState<number | null>(null);
 
   const handleRoleSelect = async (selectedRole: UserRole) => {
-    // If victim is selected, register user FIRST, then show dialog
+    // If victim is selected, register user FIRST, then show voice selection
     if (selectedRole === 'victim') {
       setPendingRole(selectedRole);
 
       // Register the user first so we have a user_id
       await completeRegistration(selectedRole);
 
-      // Then show the help dialog
-      setShowInitialHelpDialog(true);
+      // Then show voice mode selection dialog
+      setShowVoiceSelection(true);
       return;
     }
 
     // For responders, proceed with normal registration
     await completeRegistration(selectedRole);
+  };
+
+  const handleVoiceModeSelect = (useVoice: boolean) => {
+    setUseVoiceMode(useVoice);
+    setShowVoiceSelection(false);
+
+    if (useVoice) {
+      // Show voice conversation screen
+      setShowVoiceConversation(true);
+    } else {
+      // Show traditional text form
+      setShowInitialHelpDialog(true);
+    }
   };
 
   const completeRegistration = async (selectedRole: UserRole) => {
@@ -70,6 +88,22 @@ function App() {
 
     // Close help dialog
     setShowInitialHelpDialog(false);
+    setPendingRole(null);
+
+    // Show caller guide dialog
+    setCurrentCaseId(caseId);
+    setShowCallerGuideDialog(true);
+  };
+
+  const handleVoiceCaseCreated = async (caseId: number) => {
+    // After voice conversation creates a case
+    console.log('Voice case created with ID:', caseId);
+
+    // Store case ID in localStorage
+    localStorage.setItem('last_case_id', caseId.toString());
+
+    // Close voice conversation
+    setShowVoiceConversation(false);
     setPendingRole(null);
 
     // Show caller guide dialog
@@ -118,6 +152,22 @@ function App() {
           </div>
         )}
       </>
+    );
+  }
+
+  // Show voice mode selection after victim registers (only for victims)
+  if (hasRole && showVoiceSelection) {
+    return <VoiceSelectionDialog onSelectVoiceMode={handleVoiceModeSelect} />;
+  }
+
+  // Show voice conversation screen
+  if (hasRole && showVoiceConversation) {
+    return (
+      <VoiceConversationScreen
+        userLocation={location}
+        disaster={tempDisaster}
+        onCaseCreated={handleVoiceCaseCreated}
+      />
     );
   }
 

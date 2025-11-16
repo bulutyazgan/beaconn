@@ -71,6 +71,16 @@ class VoiceAgentResponse(BaseModel):
     information_collected: Dict
 
 
+class TranscribeRequest(BaseModel):
+    audio: str = Field(..., description="Base64 encoded audio data")
+    session_id: str = Field(..., description="Session ID")
+
+
+class TranscribeResponse(BaseModel):
+    transcript: str
+    session_id: str
+
+
 # ==================== Routes ====================
 
 @router.post("/stt/token", response_model=STTTokenResponse)
@@ -310,3 +320,54 @@ async def voice_health_check():
             "status": "unhealthy",
             "error": str(e)
         }
+
+
+@router.post("/transcribe", response_model=TranscribeResponse)
+async def transcribe_audio(request: TranscribeRequest):
+    """
+    Transcribe audio using ElevenLabs STT API.
+
+    Takes base64 encoded audio and returns transcript text.
+    """
+    try:
+        import base64
+        import io
+        import requests
+        from .config import VoiceConfig
+
+        # Decode base64 audio
+        audio_bytes = base64.b64decode(request.audio)
+
+        # Call ElevenLabs STT API directly (not using token endpoint which doesn't exist)
+        response = requests.post(
+            "https://api.elevenlabs.io/v1/speech-to-text",
+            headers={
+                "xi-api-key": VoiceConfig.ELEVENLABS_API_KEY,
+            },
+            files={
+                "audio": ("audio.webm", io.BytesIO(audio_bytes), "audio/webm")
+            },
+            timeout=30
+        )
+
+        response.raise_for_status()
+        data = response.json()
+
+        # Extract transcript from response
+        transcript = data.get("text", "")
+
+        if not transcript:
+            logger.warning("Empty transcript returned from ElevenLabs")
+            transcript = ""
+
+        return TranscribeResponse(
+            transcript=transcript,
+            session_id=request.session_id
+        )
+
+    except requests.exceptions.RequestException as e:
+        logger.error(f"ElevenLabs API request failed: {e}")
+        raise HTTPException(500, f"Transcription failed: {str(e)}")
+    except Exception as e:
+        logger.error(f"Transcription error: {e}")
+        raise HTTPException(500, f"Transcription failed: {str(e)}")

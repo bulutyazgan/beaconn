@@ -38,31 +38,31 @@ export function CaseDetailsDialog({ helpRequest, onClose, onClaim }: CaseDetails
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="glass rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="glass rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-white/10 animate-in zoom-in-95 duration-300">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
+        <div className="flex items-center justify-between p-8 border-b border-white/10 bg-gradient-to-r from-neutral-800/50 to-neutral-700/50">
           <div>
-            <h2 className="text-xl font-bold text-white">Help Request Details</h2>
-            <p className="text-sm text-gray-400 mt-1">Case #{helpRequest.id}</p>
+            <h2 className="text-2xl font-bold text-neutral-50 tracking-tight">Help Request Details</h2>
+            <p className="text-sm text-neutral-400 mt-1 font-medium">Case #{helpRequest.id}</p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            className="p-2.5 hover:bg-white/10 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95"
           >
-            <X className="w-5 h-5 text-gray-400" />
+            <X className="w-5 h-5 text-neutral-400 hover:text-neutral-200 transition-colors" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-6">
+        <div className="p-8 space-y-6">
           {/* Urgency Badge */}
-          <div className="flex items-center justify-between">
-            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border ${getUrgencyColor(helpRequest.urgency)}`}>
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className={`inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl border shadow-lg ${getUrgencyColor(helpRequest.urgency)}`}>
               <AlertTriangle className="w-5 h-5" />
-              <span className="font-semibold uppercase text-sm">{helpRequest.urgency} URGENCY</span>
+              <span className="font-bold uppercase text-sm tracking-wide">{helpRequest.urgency} URGENCY</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-400 text-sm">
+            <div className="flex items-center gap-2 text-neutral-400 text-sm font-medium">
               <Clock className="w-4 h-4" />
               <span>{new Date(helpRequest.createdAt).toLocaleString()}</span>
             </div>
@@ -70,63 +70,63 @@ export function CaseDetailsDialog({ helpRequest, onClose, onClaim }: CaseDetails
 
           {/* Raw User Input */}
           {helpRequest.rawDescription && (
-            <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
-                <MessageSquare className="w-4 h-4" />
+            <div className="bg-white/5 border border-white/10 rounded-xl p-5 shadow-md">
+              <h3 className="text-sm font-bold text-neutral-50 mb-3 flex items-center gap-2 tracking-wide">
+                <MessageSquare className="w-4 h-4 text-primary" />
                 User's Report
               </h3>
-              <p className="text-gray-300">{helpRequest.rawDescription}</p>
+              <p className="text-neutral-300 leading-relaxed">{helpRequest.rawDescription}</p>
             </div>
           )}
 
           {/* AI Analysis */}
           {helpRequest.aiReasoning && (
-            <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-orange-400 mb-2 flex items-center gap-2">
-                <span className="text-base">🤖</span>
+            <div className="bg-gradient-to-br from-alert/10 to-alert-dark/10 border border-alert/30 rounded-xl p-5 shadow-md">
+              <h3 className="text-sm font-bold text-alert-light mb-3 flex items-center gap-2 tracking-wide">
+                <span className="text-lg">🤖</span>
                 AI Assessment
               </h3>
-              <p className="text-gray-300 italic text-sm">{helpRequest.aiReasoning}</p>
+              <p className="text-neutral-300 italic text-sm leading-relaxed">{helpRequest.aiReasoning}</p>
             </div>
           )}
 
           {/* Details Grid */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-5">
             {/* Location */}
-            <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-              <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
-                <MapPin className="w-4 h-4" />
-                <span className="font-medium">Address</span>
+            <div className="bg-white/5 border border-white/10 rounded-xl p-5 shadow-md hover:bg-white/8 transition-colors">
+              <div className="flex items-center gap-2 text-neutral-400 text-sm mb-2">
+                <MapPin className="w-4 h-4 text-primary" />
+                <span className="font-bold tracking-wide">Address</span>
               </div>
-              <p className="text-white text-sm">
+              <p className="text-neutral-100 text-sm font-mono mb-1">
                 {helpRequest.location.lat.toFixed(4)}, {helpRequest.location.lng.toFixed(4)}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-neutral-500 font-medium">
                 Click on map to view exact location
               </p>
             </div>
 
             {/* People Count */}
             {helpRequest.peopleCount > 0 && (
-              <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-                <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
-                  <Users className="w-4 h-4" />
-                  <span className="font-medium">People Affected</span>
+              <div className="bg-white/5 border border-white/10 rounded-xl p-5 shadow-md hover:bg-white/8 transition-colors">
+                <div className="flex items-center gap-2 text-neutral-400 text-sm mb-2">
+                  <Users className="w-4 h-4 text-primary" />
+                  <span className="font-bold tracking-wide">People Affected</span>
                 </div>
-                <p className="text-white text-lg font-semibold">{helpRequest.peopleCount}</p>
+                <p className="text-neutral-50 text-2xl font-bold">{helpRequest.peopleCount}</p>
               </div>
             )}
           </div>
 
           {/* Vulnerability Factors */}
           {helpRequest.vulnerabilityFactors && helpRequest.vulnerabilityFactors.length > 0 && (
-            <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-orange-300 mb-2">Vulnerability Factors</h3>
+            <div className="bg-gradient-to-br from-alert/10 to-alert-dark/10 border border-alert/20 rounded-xl p-5 shadow-md">
+              <h3 className="text-sm font-bold text-alert-light mb-3 tracking-wide">Vulnerability Factors</h3>
               <div className="flex flex-wrap gap-2">
                 {helpRequest.vulnerabilityFactors.map((factor, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 bg-orange-500/20 border border-orange-500/30 rounded-full text-xs text-orange-200"
+                    className="px-4 py-1.5 bg-alert/20 border border-alert/30 rounded-full text-xs text-alert-light font-semibold tracking-wide shadow-sm"
                   >
                     {factor}
                   </span>
@@ -137,18 +137,18 @@ export function CaseDetailsDialog({ helpRequest, onClose, onClaim }: CaseDetails
 
           {/* Mobility Status */}
           {helpRequest.mobilityStatus && (
-            <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-white mb-1">Mobility Status</h3>
-              <p className="text-gray-300 capitalize">{helpRequest.mobilityStatus}</p>
+            <div className="bg-white/5 border border-white/10 rounded-xl p-5 shadow-md">
+              <h3 className="text-sm font-bold text-neutral-50 mb-2 tracking-wide">Mobility Status</h3>
+              <p className="text-neutral-300 capitalize font-medium text-base">{helpRequest.mobilityStatus}</p>
             </div>
           )}
 
           {/* Action Buttons */}
-          <div className="flex gap-3 pt-4 border-t border-white/10">
+          <div className="flex gap-4 pt-6 border-t border-white/10">
             <button
               onClick={handleClaim}
               disabled={claiming || helpRequest.status !== 'pending'}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-500/20 hover:bg-green-500/30 disabled:bg-gray-500/10 border border-green-500/30 disabled:border-gray-500/20 rounded-lg font-semibold text-green-300 disabled:text-gray-500 transition-colors disabled:cursor-not-allowed"
+              className="flex-1 flex items-center justify-center gap-2.5 px-6 py-4 bg-gradient-to-r from-secondary/20 to-secondary-dark/20 hover:from-secondary/30 hover:to-secondary-dark/30 disabled:from-neutral-700/20 disabled:to-neutral-800/20 border border-secondary/40 disabled:border-neutral-600/30 rounded-xl font-bold text-secondary-light disabled:text-neutral-500 transition-all duration-200 disabled:cursor-not-allowed shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] tracking-wide"
             >
               {claiming ? (
                 <>
@@ -166,7 +166,7 @@ export function CaseDetailsDialog({ helpRequest, onClose, onClaim }: CaseDetails
             </button>
             <button
               onClick={onClose}
-              className="px-6 py-3 glass hover:bg-white/10 rounded-lg font-medium text-white transition-colors"
+              className="px-6 py-4 glass hover:bg-white/10 rounded-xl font-semibold text-neutral-200 hover:text-white transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] tracking-wide shadow-md"
             >
               Cancel
             </button>

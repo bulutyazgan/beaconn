@@ -529,59 +529,59 @@ export function MyCasePanel({ caseId }: MyCasePanelProps) {
 
             {/* Status Overlay - Fixed position on map */}
             <div className="absolute top-6 right-4 z-10 mt-4">
-              <div className="glass rounded-lg p-4 min-w-[200px] border border-white/10 shadow-2xl">
-                <div className="flex items-center gap-2 mb-2">
+              <div className="glass rounded-xl p-5 min-w-[220px] border border-white/10 shadow-2xl backdrop-blur-3xl">
+                <div className="flex items-center gap-2.5 mb-3">
                   {helperInfo ? (
                     <>
-                      <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                      <span className="text-sm text-white font-medium">Responder On The Way</span>
+                      <div className="w-2.5 h-2.5 rounded-full bg-secondary-light animate-pulse shadow-lg shadow-secondary/50" />
+                      <span className="text-sm text-neutral-50 font-bold tracking-wide">Responder On The Way</span>
                     </>
                   ) : (
                     <>
-                      <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
-                      <span className="text-sm text-white font-medium">Request Status</span>
+                      <div className="w-2.5 h-2.5 rounded-full bg-alert-light animate-pulse shadow-lg shadow-alert/50" />
+                      <span className="text-sm text-neutral-50 font-bold tracking-wide">Request Status</span>
                     </>
                   )}
                 </div>
 
                 {helperInfo ? (
                   <>
-                    <p className="text-xs text-green-300 font-semibold mb-1">
+                    <p className="text-sm text-secondary-light font-bold mb-2 tracking-wide">
                       {helperInfo.name} is responding
                     </p>
                     {routeDistance && routeDuration && (
                       <>
-                        <div className="flex items-center gap-1 mb-1">
-                          <Navigation className="w-3 h-3 text-green-400" />
-                          <p className="text-xs text-gray-300">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <Navigation className="w-3.5 h-3.5 text-secondary" />
+                          <p className="text-xs text-neutral-300 font-medium">
                             {routeDistance}
                           </p>
                         </div>
-                        <div className="flex items-center gap-1 mb-1">
-                          <Clock className="w-3 h-3 text-blue-400" />
-                          <p className="text-xs text-gray-300">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Clock className="w-3.5 h-3.5 text-primary" />
+                          <p className="text-xs text-neutral-300 font-medium">
                             ETA: {routeDuration}
                           </p>
                         </div>
                       </>
                     )}
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-neutral-500 font-medium">
                       Help is on the way. Stay safe!
                     </p>
                   </>
                 ) : (
                   <>
-                    <p className="text-xs text-gray-400 mb-1">
+                    <p className="text-sm text-alert-light font-bold mb-1.5 tracking-wide">
                       Waiting for responder
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-neutral-500 font-medium leading-relaxed">
                       Your location is visible to nearby helpers
                     </p>
                   </>
                 )}
 
-                <div className="mt-2 pt-2 border-t border-white/10">
-                  <p className="text-xs text-gray-400">Case #{caseId}</p>
+                <div className="mt-3 pt-3 border-t border-white/10">
+                  <p className="text-xs text-neutral-400 font-semibold tracking-wider">Case #{caseId}</p>
                 </div>
               </div>
             </div>
@@ -607,32 +607,32 @@ export function MyCasePanel({ caseId }: MyCasePanelProps) {
         `}
       >
         {/* Header with Expand/Collapse button */}
-        <div className="p-4 border-b border-white/10 flex-shrink-0 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5" />
-            <h2 className="text-lg font-semibold text-white">My Help Request</h2>
-            <span className="text-sm text-gray-400">#{caseId}</span>
+        <div className="p-6 border-b border-white/10 flex-shrink-0 flex items-center justify-between bg-gradient-to-r from-neutral-800/50 to-neutral-700/50">
+          <div className="flex items-center gap-3">
+            <FileText className="w-5 h-5 text-primary" />
+            <h2 className="text-xl font-bold text-neutral-50 tracking-tight">My Help Request</h2>
+            <span className="text-sm text-neutral-400 font-semibold">#{caseId}</span>
           </div>
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            className="p-2.5 hover:bg-white/10 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95"
             title={isExpanded ? "Minimize" : "Expand for larger view"}
           >
             {isExpanded ? (
-              <Minimize2 className="w-5 h-5 text-gray-400" />
+              <Minimize2 className="w-5 h-5 text-neutral-400 hover:text-neutral-200 transition-colors" />
             ) : (
-              <Maximize2 className="w-5 h-5 text-gray-400" />
+              <Maximize2 className="w-5 h-5 text-neutral-400 hover:text-neutral-200 transition-colors" />
             )}
           </button>
         </div>
 
         {/* Chat Messages Area - Hero Agent Recommendations */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-6 space-y-5">
           {loading && chatMessages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full">
-              <Clock className="w-8 h-8 text-blue-400 animate-pulse mb-3" />
-              <p className="text-white font-medium">Hero Agent is analyzing your situation...</p>
-              <p className="text-gray-400 text-sm mt-1">Generating personalized safety guidance</p>
+              <Clock className="w-10 h-10 text-primary animate-pulse mb-4 drop-shadow-lg" />
+              <p className="text-neutral-50 font-bold text-lg tracking-tight">Hero Agent is analyzing your situation...</p>
+              <p className="text-neutral-400 text-sm mt-2 font-medium">Generating personalized safety guidance</p>
             </div>
           ) : (
             <>
@@ -642,44 +642,44 @@ export function MyCasePanel({ caseId }: MyCasePanelProps) {
                   className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[85%] rounded-lg p-4 ${
+                    className={`max-w-[85%] rounded-xl p-5 shadow-lg ${
                       message.sender === 'user'
-                        ? 'bg-green-500/20 border border-green-500/30'
-                        : 'bg-blue-500/20 border border-blue-500/30'
+                        ? 'bg-gradient-to-br from-secondary/20 to-secondary-dark/20 border border-secondary/30'
+                        : 'bg-gradient-to-br from-primary/20 to-primary-dark/20 border border-primary/30'
                     }`}
                   >
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-2.5 mb-3">
                       {message.sender === 'hero_agent' ? (
-                        <Shield className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                        <Shield className="w-4 h-4 text-primary-light flex-shrink-0 drop-shadow-md" />
                       ) : (
-                        <div className="w-4 h-4 rounded-full bg-green-400 flex-shrink-0" />
+                        <div className="w-4 h-4 rounded-full bg-secondary-light flex-shrink-0 shadow-md" />
                       )}
-                      <span className={`text-xs font-semibold ${
-                        message.sender === 'user' ? 'text-green-400' : 'text-blue-400'
+                      <span className={`text-xs font-bold tracking-wider ${
+                        message.sender === 'user' ? 'text-secondary-light' : 'text-primary-light'
                       }`}>
                         {message.sender === 'user' ? 'You' : 'Hero Agent'}
                       </span>
-                      <span className="text-xs text-gray-500 ml-auto">
+                      <span className="text-xs text-neutral-500 ml-auto font-medium">
                         {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed">
+                    <p className="text-sm text-neutral-200 whitespace-pre-wrap leading-relaxed font-medium">
                       {message.text}
                     </p>
 
                     {/* Interactive button options - Instant Send */}
                     {message.options && message.options.length > 0 && message === pendingQuestion && (
-                      <div className="mt-3 space-y-2">
-                        <p className="text-xs text-gray-400">
+                      <div className="mt-4 space-y-3">
+                        <p className="text-xs text-neutral-400 font-bold tracking-wide">
                           Click to send instantly:
                         </p>
-                        <div className="grid grid-cols-1 gap-2">
+                        <div className="grid grid-cols-1 gap-2.5">
                           {message.options.map((option) => (
                             <button
                               key={option.id}
                               onClick={() => handleButtonSelect(option)}
                               disabled={submittingUpdate}
-                              className="px-3 py-2 rounded-lg text-sm text-left transition-all bg-blue-500/10 hover:bg-blue-500/20 disabled:bg-white/5 border border-blue-500/30 disabled:border-white/10 text-blue-200 hover:text-white disabled:text-gray-500 hover:scale-102 active:scale-98 disabled:cursor-not-allowed"
+                              className="px-4 py-3 rounded-xl text-sm text-left font-semibold transition-all bg-primary/10 hover:bg-primary/20 disabled:bg-white/5 border border-primary/30 disabled:border-white/10 text-primary-light hover:text-neutral-50 disabled:text-neutral-500 hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed shadow-md hover:shadow-lg tracking-wide"
                             >
                               <span>{option.label}</span>
                             </button>
@@ -695,23 +695,23 @@ export function MyCasePanel({ caseId }: MyCasePanelProps) {
         </div>
 
         {/* Input Area - Free-text for custom responses */}
-        <div className="p-4 border-t border-white/10 flex-shrink-0 bg-background-elevated/50">
+        <div className="p-6 border-t border-white/10 flex-shrink-0 bg-gradient-to-r from-neutral-800/50 to-neutral-700/50">
           {pendingQuestion && (
-            <p className="text-xs text-gray-400 mb-2 text-center">
+            <p className="text-xs text-neutral-400 mb-3 text-center font-semibold tracking-wide">
               Choose an option above, or type a custom response below
             </p>
           )}
           {!pendingQuestion && (
-            <p className="text-xs text-gray-400 mb-2">
+            <p className="text-xs text-neutral-400 mb-3 font-semibold tracking-wide">
               Log changes in your situation
             </p>
           )}
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <textarea
               value={updateText}
               onChange={(e) => setUpdateText(e.target.value)}
               placeholder={pendingQuestion ? "Or type your own response..." : "E.g., 'I've moved to a safer location' or 'More people have joined me'"}
-              className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none"
+              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 resize-none transition-all shadow-inner font-medium"
               rows={2}
               disabled={submittingUpdate}
               onKeyDown={(e) => {
@@ -724,16 +724,16 @@ export function MyCasePanel({ caseId }: MyCasePanelProps) {
             <button
               onClick={handleSubmitUpdate}
               disabled={!updateText.trim() || submittingUpdate}
-              className="px-4 h-auto bg-green-500/20 hover:bg-green-500/30 disabled:bg-white/5 border border-green-500/30 disabled:border-white/10 rounded-lg font-medium text-green-300 disabled:text-gray-500 transition-colors disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-5 h-auto bg-gradient-to-r from-secondary/20 to-secondary-dark/20 hover:from-secondary/30 hover:to-secondary-dark/30 disabled:from-neutral-700/20 disabled:to-neutral-800/20 border border-secondary/30 disabled:border-white/10 rounded-xl font-bold text-secondary-light disabled:text-neutral-500 transition-all disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
             >
               {submittingUpdate ? (
-                <Clock className="w-4 h-4 animate-spin" />
+                <Clock className="w-5 h-5 animate-spin" />
               ) : (
-                <Send className="w-4 h-4" />
+                <Send className="w-5 h-5" />
               )}
             </button>
           </div>
-          <p className="text-xs text-gray-500 mt-2">
+          <p className="text-xs text-neutral-500 mt-3 font-medium">
             Press Enter to send, Shift+Enter for new line
           </p>
         </div>

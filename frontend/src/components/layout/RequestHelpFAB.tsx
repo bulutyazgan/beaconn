@@ -8,7 +8,7 @@ interface RequestHelpFABProps {
 export function RequestHelpFAB({ onClick }: RequestHelpFABProps) {
   console.log('🔴 RequestHelpFAB component is rendering!');
   return (
-    <div className="fixed bottom-8 right-8 z-[9999] group" style={{ position: 'fixed', bottom: '32px', right: '32px', zIndex: 9999 }}>
+    <div className="fixed bottom-8 left-8 z-[9999] group" style={{ position: 'fixed', bottom: '32px', left: '32px', zIndex: 9999 }}>
       {/* Pulsing ring animation - warm brown tones */}
       <div
         className="absolute inset-0 rounded-full animate-ping"
@@ -35,7 +35,7 @@ export function RequestHelpFAB({ onClick }: RequestHelpFABProps) {
       </Button>
 
       {/* Tooltip on hover - brown theme */}
-      <div className="absolute bottom-full right-0 mb-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+      <div className="absolute bottom-full left-0 mb-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
         <div
           className="px-4 py-2 rounded-lg shadow-xl backdrop-blur-xl whitespace-nowrap"
           style={{

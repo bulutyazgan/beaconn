@@ -22,6 +22,7 @@ import os
 sys.path.insert(0, os.path.dirname(__file__))
 
 from services import users, cases, helpers, guides, messages
+from voice.routes import router as voice_router
 
 # Create FastAPI app
 app = FastAPI(
@@ -38,6 +39,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Register voice routes
+app.include_router(voice_router)
 
 
 # ============================================================================
@@ -557,4 +561,4 @@ def root():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)

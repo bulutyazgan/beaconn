@@ -269,8 +269,11 @@ export function Dashboard({ role, disaster, onChangeRole }: DashboardProps) {
   if (loading && !location) {
     return (
       <div className="min-h-screen w-full bg-background-primary flex items-center justify-center">
-        <div className="glass p-6 rounded-lg">
-          <p className="text-accent-blue">Loading location...</p>
+        <div className="glass p-8 rounded-2xl shadow-2xl border border-white/10">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 rounded-full border-4 border-primary/30 border-t-primary animate-spin"></div>
+            <p className="text-primary-light font-bold text-lg tracking-tight">Loading location...</p>
+          </div>
         </div>
       </div>
     );
@@ -289,12 +292,11 @@ export function Dashboard({ role, disaster, onChangeRole }: DashboardProps) {
           // Call the onChangeRole to reset state
           onChangeRole();
         }}
-        className="fixed top-4 left-4 z-[9999] px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:scale-105"
+        className="fixed top-4 left-4 z-[9999] px-5 py-3 rounded-xl text-sm font-bold tracking-wide transition-all duration-300 hover:scale-105 active:scale-95 shadow-2xl hover:shadow-[0_12px_40px_rgba(166,124,82,0.4)]"
         style={{
           background: 'linear-gradient(135deg, #A67C52 0%, #8B5E34 100%)',
           color: '#F5F1EB',
-          border: '1px solid rgba(245, 241, 235, 0.2)',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+          border: '1px solid rgba(245, 241, 235, 0.25)',
         }}
       >
         🔄 Reset to Role Selection
