@@ -37,7 +37,8 @@ export interface HelpRequest {
   urgency: Urgency;
   location: Location;
   peopleCount: number;
-  description: string;
+  description: string; // AI-cleaned/processed description
+  rawDescription?: string; // Original user input (exactly what they typed)
   aiReasoning?: string; // AI's explanation of urgency/danger assessment
   createdAt: Date;
   status: HelpRequestStatus;

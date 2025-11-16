@@ -81,8 +81,12 @@ def run_input_processing_agent(case_id: int) -> Dict:
             '  "vulnerability_factors": list of '
             '["elderly","children_present","medical_needs","disability","pregnant"],\n'
             '  "urgency": "low" | "medium" | "high" | "critical",\n'
-            '  "danger_level": "safe" | "moderate" | "severe" | "life_threatening"\n'
+            '  "danger_level": "safe" | "moderate" | "severe" | "life_threatening",\n'
+            '  "reasoning": str (2-3 sentences explaining why you assigned this urgency/danger level)\n'
             "}\n\n"
+            "IMPORTANT: The reasoning field should explain your assessment in plain language. "
+            "Example: 'Marked as CRITICAL urgency due to trapped individual with breathing difficulty. "
+            "Life-threatening danger level assigned because situation could deteriorate rapidly without immediate help.'\n\n"
             "Always make a best guess. If unsure, use null for optional fields, "
             'urgency = "high", and danger_level = "severe". '
             "Do not include any extra keys or text outside the JSON."
@@ -136,7 +140,8 @@ def run_input_processing_agent(case_id: int) -> Dict:
                 mobility_status = %s,
                 vulnerability_factors = %s,
                 urgency = %s,
-                danger_level = %s
+                danger_level = %s,
+                ai_reasoning = %s
             WHERE id = %s
             """,
             (
@@ -146,6 +151,7 @@ def run_input_processing_agent(case_id: int) -> Dict:
                 extracted_data.get("vulnerability_factors", []),
                 extracted_data.get("urgency", "high"),
                 extracted_data.get("danger_level", "severe"),
+                extracted_data.get("reasoning", "AI analysis in progress..."),
                 case_id
             )
         )

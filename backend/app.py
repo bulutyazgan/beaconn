@@ -276,6 +276,16 @@ def get_assignment(assignment_id: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/api/assignments/case/{case_id}")
+def get_case_assignments(case_id: int):
+    """Get all assignments for a case (for victims to see who's responding)."""
+    try:
+        assignments = helpers.get_assignments_for_case(case_id=case_id)
+        return {"assignments": assignments, "count": len(assignments)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/api/assignments/helper/{helper_user_id}")
 def get_helper_assignments(
     helper_user_id: int,

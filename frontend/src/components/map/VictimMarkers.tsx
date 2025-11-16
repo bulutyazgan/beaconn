@@ -372,7 +372,7 @@ export function VictimMarkers({ map, helpRequests, onMarkerClick }: VictimMarker
                 font-size: 13px;
                 color: #D9CFC0;
                 line-height: 1.5;
-              ">${request.description}</div>
+              ">${request.rawDescription || request.description}</div>
             </div>
 
             ${request.aiReasoning ? `

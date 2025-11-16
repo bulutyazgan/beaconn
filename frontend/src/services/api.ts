@@ -288,6 +288,16 @@ export async function getAssignment(assignmentId: number): Promise<Assignment> {
   return handleResponse<Assignment>(response);
 }
 
+export async function getCaseAssignments(
+  caseId: number
+): Promise<any[]> {
+  const response = await fetch(
+    `${API_BASE_URL}/api/assignments/case/${caseId}`
+  );
+  const data = await handleResponse<{ assignments: any[], count: number }>(response);
+  return data.assignments;
+}
+
 export async function getHelperAssignments(
   helperUserId: number,
   includeCompleted: boolean = false

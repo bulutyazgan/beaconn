@@ -68,14 +68,27 @@ export function CaseDetailsDialog({ helpRequest, onClose, onClaim }: CaseDetails
             </div>
           </div>
 
-          {/* Description */}
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-            <h3 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
-              <MessageSquare className="w-4 h-4" />
-              Situation Description
-            </h3>
-            <p className="text-gray-300">{helpRequest.description}</p>
-          </div>
+          {/* Raw User Input */}
+          {helpRequest.rawDescription && (
+            <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+              <h3 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                <MessageSquare className="w-4 h-4" />
+                User's Report
+              </h3>
+              <p className="text-gray-300">{helpRequest.rawDescription}</p>
+            </div>
+          )}
+
+          {/* AI Analysis */}
+          {helpRequest.aiReasoning && (
+            <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4">
+              <h3 className="text-sm font-semibold text-orange-400 mb-2 flex items-center gap-2">
+                <span className="text-base">🤖</span>
+                AI Assessment
+              </h3>
+              <p className="text-gray-300 italic text-sm">{helpRequest.aiReasoning}</p>
+            </div>
+          )}
 
           {/* Details Grid */}
           <div className="grid grid-cols-2 gap-4">

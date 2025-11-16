@@ -47,6 +47,7 @@ function mapCaseToHelpRequest(apiCase: Case): HelpRequest {
     urgency: apiCase.urgency,
     status,
     description: apiCase.description || apiCase.raw_problem_description,
+    rawDescription: apiCase.raw_problem_description, // Always include raw user input
     aiReasoning: apiCase.ai_reasoning || undefined,
     createdAt: new Date(apiCase.created_at),
     vulnerabilityFactors: apiCase.vulnerability_factors || [],

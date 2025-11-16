@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { FileText, Shield, Send, Clock, ChevronUp, ChevronDown, Maximize2, Minimize2 } from 'lucide-react';
-import { getCallerGuide, type CallerGuide, type Case, getCase } from '@/services/api';
+import { FileText, Shield, Send, Clock, ChevronUp, ChevronDown, Maximize2, Minimize2, Navigation } from 'lucide-react';
+import { getCallerGuide, type CallerGuide, type Case, getCase, getCaseAssignments, getUser } from '@/services/api';
 import { MapContainer } from '@/components/map/MapContainer';
 import type { Location, HelpRequest } from '@/types';
 
@@ -33,6 +33,9 @@ export function MyCasePanel({ caseId }: MyCasePanelProps) {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<Set<string>>(new Set());
   const [pendingQuestion, setPendingQuestion] = useState<ChatMessage | null>(null);
+  const [assignments, setAssignments] = useState<any[]>([]);
+  const [helperInfo, setHelperInfo] = useState<any>(null);
+  const [helperDistance, setHelperDistance] = useState<number | null>(null);
 
   // Fetch case data for map display
   useEffect(() => {
@@ -99,6 +102,57 @@ export function MyCasePanel({ caseId }: MyCasePanelProps) {
 
     return () => clearInterval(interval);
   }, [caseId, loading, chatMessages.length]);
+
+  // Poll for assignment status and helper location
+  useEffect(() => {
+    const fetchAssignmentsAndHelper = async () => {
+      try {
+        const assignmentsList = await getCaseAssignments(caseId);
+        setAssignments(assignmentsList);
+
+        // If there's an active assignment, fetch helper info
+        if (assignmentsList.length > 0) {
+          const activeAssignment = assignmentsList.find(a => !a.completed_at);
+          if (activeAssignment) {
+            const helper = await getUser(activeAssignment.helper_user_id.toString());
+            setHelperInfo(helper);
+
+            // Calculate distance if we have both locations
+            if (helper.location && caseData?.location) {
+              const distance = calculateDistance(
+                caseData.location.latitude,
+                caseData.location.longitude,
+                helper.location.latitude,
+                helper.location.longitude
+              );
+              setHelperDistance(distance);
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch assignments:', err);
+      }
+    };
+
+    fetchAssignmentsAndHelper();
+    // Poll every 3 seconds for real-time updates
+    const interval = setInterval(fetchAssignmentsAndHelper, 3000);
+
+    return () => clearInterval(interval);
+  }, [caseId, caseData]);
+
+  // Haversine formula to calculate distance between two points
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
+  };
 
   const handleButtonSelect = async (option: ButtonOption) => {
     if (!pendingQuestion) return;
@@ -389,15 +443,50 @@ export function MyCasePanel({ caseId }: MyCasePanelProps) {
             <div className="absolute top-6 right-4 z-10 mt-4">
               <div className="glass rounded-lg p-4 min-w-[200px] border border-white/10 shadow-2xl">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
-                  <span className="text-sm text-white font-medium">Request Status</span>
+                  {helperInfo ? (
+                    <>
+                      <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                      <span className="text-sm text-white font-medium">Responder On The Way</span>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
+                      <span className="text-sm text-white font-medium">Request Status</span>
+                    </>
+                  )}
                 </div>
-                <p className="text-xs text-gray-400 mb-1">
-                  Waiting for responder
-                </p>
-                <p className="text-xs text-gray-500">
-                  Your location is visible to nearby helpers
-                </p>
+
+                {helperInfo ? (
+                  <>
+                    <p className="text-xs text-green-300 font-semibold mb-1">
+                      {helperInfo.name} is responding
+                    </p>
+                    {helperDistance !== null && (
+                      <div className="flex items-center gap-1 mb-1">
+                        <Navigation className="w-3 h-3 text-green-400" />
+                        <p className="text-xs text-gray-300">
+                          {helperDistance < 1
+                            ? `${(helperDistance * 1000).toFixed(0)}m away`
+                            : `${helperDistance.toFixed(1)}km away`
+                          }
+                        </p>
+                      </div>
+                    )}
+                    <p className="text-xs text-gray-500">
+                      Help is on the way. Stay safe!
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-xs text-gray-400 mb-1">
+                      Waiting for responder
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Your location is visible to nearby helpers
+                    </p>
+                  </>
+                )}
+
                 <div className="mt-2 pt-2 border-t border-white/10">
                   <p className="text-xs text-gray-400">Case #{caseId}</p>
                 </div>

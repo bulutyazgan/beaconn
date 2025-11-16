@@ -154,7 +154,7 @@ def get_case(case_id: int) -> Optional[Dict]:
                 id, caller_user_id, reported_by_user_id, case_group_id,
                 location, description, raw_problem_description,
                 people_count, mobility_status, vulnerability_factors,
-                urgency, danger_level, status, created_at, resolved_at
+                urgency, danger_level, ai_reasoning, status, created_at, resolved_at
             FROM cases
             WHERE id = %s
             """,
@@ -192,6 +192,7 @@ def get_case(case_id: int) -> Optional[Dict]:
             "vulnerability_factors": row['vulnerability_factors'],
             "urgency": row['urgency'],
             "danger_level": row['danger_level'],
+            "ai_reasoning": row['ai_reasoning'],
             "status": row['status'],
             "created_at": row['created_at'].isoformat() if row['created_at'] else None,
             "resolved_at": row['resolved_at'].isoformat() if row['resolved_at'] else None
@@ -232,7 +233,7 @@ def get_nearby_cases(
                 id, caller_user_id, case_group_id, location,
                 description, raw_problem_description, people_count,
                 mobility_status, vulnerability_factors,
-                urgency, danger_level, status, created_at,
+                urgency, danger_level, ai_reasoning, status, created_at,
                 reported_by_user_id
             FROM cases
             WHERE status = ANY(%s)
@@ -296,6 +297,7 @@ def get_nearby_cases(
                 "vulnerability_factors": row['vulnerability_factors'],
                 "urgency": row['urgency'],
                 "danger_level": row['danger_level'],
+                "ai_reasoning": row['ai_reasoning'],
                 "status": row['status'],
                 "created_at": row['created_at'].isoformat() if row['created_at'] else None,
                 "distance_km": round(distance_meters / 1000, 2)

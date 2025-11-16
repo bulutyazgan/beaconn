@@ -94,6 +94,7 @@ CREATE TABLE cases (
     vulnerability_factors TEXT[], -- ['elderly', 'children_present', 'medical_needs'] - prioritization
     urgency VARCHAR(50) NOT NULL, -- low, medium, high, critical - how soon help is needed
     danger_level VARCHAR(50) NOT NULL, -- safe, moderate, severe, life_threatening - risk to victim
+    ai_reasoning TEXT, -- AI agent's explanation of urgency/danger assessment
     status VARCHAR(50) DEFAULT 'open', -- open, assigned, in_progress, resolved, closed
     created_at TIMESTAMP DEFAULT NOW(),
     resolved_at TIMESTAMP -- When case successfully closed
