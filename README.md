@@ -1,17 +1,7 @@
 
-# Beacon / Beaconn — Emergency Response Coordination System
+# Beaconn — The Civilian Emergency Response Coordination System
 
-Beacon (beaconn) is an AI-powered emergency response coordination platform developed during the Great Agent Hack at UCL. It combines LangGraph-style agent orchestration, LangChain tooling, and modern backend + frontend components to prototype rapid, localised assistance matching between callers and volunteer helpers.
-
-This README is an updated, practical entrypoint: project overview, required files (including references to .env.example), setup instructions, how to run, and how to run basic tests.
-
-Quick links (in-repo docs)
-- QUICKSTART.md — quick setup & run instructions
-- IMPLEMENTATION_SUMMARY.md — architecture and implementation notes
-- FRONTEND_BACKEND_INTEGRATION_PLAN.md — API & integration plan
-- LANGSMITH_QUICKSTART.md — how to set up LangSmith logging/telemetry
-- LANGSMITH_CODE_EXAMPLES.md — code examples for LangSmith usage
-- TRACK_A_IMPLEMENTATION_CHECKLIST.md — demo and release checklist
+When emergency services are overwhelmed, volunteers can save countless lives. We help them find those in need, in real time, with case-specific guidance. 
 
 Project overview
 - Purpose: enable quick matching of help requests ("cases") to nearby volunteers ("helpers") with LLM-based guidance and audit trails.
@@ -138,25 +128,3 @@ Troubleshooting / common issues
   - Check backend logs; some agent pipelines use external LLMs and will fail if keys are missing.
 - Frontend CORS:
   - Ensure backend allows the frontend origin or run both on localhost with default ports.
-
-Where to look next (developer docs)
-- IMPLEMENTATION_SUMMARY.md — detailed backend & agent notes
-- FRONTEND_BACKEND_INTEGRATION_PLAN.md — endpoint contracts and expected payloads
-- LANGSMITH_QUICKSTART.md & LANGSMITH_CODE_EXAMPLES.md — telemetry integration notes
-- QUICKSTART.md — condensed runnable quickstart that mirrors these steps
-
-Contributing
-- Open an issue to propose changes or request a task.
-- Follow the documented integration plans and implementation summary when adding features or modifying agent behavior.
-- Preserve or extend LangSmith traces for any agent changes.
-
-License & attribution
-- Built for the Great Agent Hack at UCL. See repo headers and individual files for license notes or contributor attributions.
-
-Contact / Authors
-- See commit history and contributors on GitHub for author details and contact.
-
-If you'd like, I can:
-- Open a PR that replaces the repository README.md with this updated README and include .env.example checks in CI.
-- Produce a very short README focused only on quickstart scripts.
-- Extract and merge key snippets from IMPLEMENTATION_SUMMARY.md and QUICKSTART.md into a single comprehensive quickstart.
