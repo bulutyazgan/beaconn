@@ -18,19 +18,15 @@ function App() {
   const [isRegistering, setIsRegistering] = useState(false);
 
   const handleRoleSelect = async (selectedRole: UserRole) => {
-    // Need location to register
-    if (!location) {
-      toast.error('Location required', {
-        description: 'Please enable location services to continue',
-      });
-      return;
-    }
-
     setIsRegistering(true);
 
     try {
+      // Use location if available, otherwise use London fallback
+      const lat = location?.lat || 51.5074;
+      const lng = location?.lng || -0.1278;
+
       // Register user with backend
-      await registerUser(selectedRole, location.lat, location.lng);
+      await registerUser(selectedRole, lat, lng);
 
       // Update local role state
       selectRole(selectedRole);

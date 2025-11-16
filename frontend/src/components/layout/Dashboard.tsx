@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { UserRole, DisasterInfo, Location, HelpRequest } from '@/types';
+import type { UserRole, DisasterInfo, Location, HelpRequest, HelpRequestStatus } from '@/types';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { Header } from './Header';
 import { MapContainer } from '@/components/map/MapContainer';
@@ -16,17 +16,29 @@ interface DashboardProps {
 
 // Helper function to map backend Case to frontend HelpRequest
 function mapCaseToHelpRequest(apiCase: Case): HelpRequest {
+  // Map backend status to frontend status
+  let status: HelpRequestStatus = 'pending';
+  if (apiCase.status === 'assigned' || apiCase.status === 'in_progress') {
+    status = 'in_progress';
+  } else if (apiCase.status === 'resolved' || apiCase.status === 'closed') {
+    status = 'resolved';
+  }
+
   return {
     id: apiCase.case_id.toString(),
-    type: 'medical', // Default type, could be inferred from description
+    disasterId: 'default-testing',
+    userId: apiCase.caller_user_id?.toString() || 'anonymous',
+    userName: 'Anonymous',
+    type: 'medical',
     location: {
       lat: apiCase.location.latitude,
       lng: apiCase.location.longitude,
     },
-    peopleCount: apiCase.people_count || undefined,
+    peopleCount: apiCase.people_count || 0,
     urgency: apiCase.urgency,
-    status: apiCase.status as any,
+    status,
     description: apiCase.description || apiCase.raw_problem_description,
+    createdAt: new Date(apiCase.created_at),
     vulnerabilityFactors: apiCase.vulnerability_factors || [],
     mobilityStatus: apiCase.mobility_status || undefined,
     timestamp: apiCase.created_at,

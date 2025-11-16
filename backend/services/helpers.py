@@ -188,7 +188,7 @@ def create_assignment(
                 assignment_id,
                 update_source,
                 update_type,
-                description
+                update_text
             )
             VALUES (%s, %s, %s, %s, %s)
             """,
@@ -314,7 +314,7 @@ def get_assignments_for_helper(helper_user_id: int, include_completed: bool = Fa
         query = """
             SELECT
                 a.id, a.case_id, a.helper_user_id, a.assigned_at, a.completed_at, a.notes, a.outcome,
-                c.location, c.description, c.urgency, c.danger_level, c.status
+                c.location, c.update_text, c.urgency, c.danger_level, c.status
             FROM assignments a
             INNER JOIN cases c ON a.case_id = c.id
             WHERE a.helper_user_id = %s
@@ -353,7 +353,7 @@ def get_assignments_for_helper(helper_user_id: int, include_completed: bool = Fa
                         "latitude": case_lat,
                         "longitude": case_lon
                     },
-                    "description": row['description'],
+                    "update_text": row['update_text'],
                     "urgency": row['urgency'],
                     "danger_level": row['danger_level'],
                     "status": row['status']
@@ -373,7 +373,7 @@ def complete_assignment(
 
     Args:
         assignment_id: Assignment ID
-        outcome: Outcome description (e.g., "successfully_helped", "victim_not_found")
+        outcome: Outcome update_text (e.g., "successfully_helped", "victim_not_found")
         notes: Optional completion notes
 
     Returns:
@@ -423,7 +423,7 @@ def complete_assignment(
                 assignment_id,
                 update_source,
                 update_type,
-                description
+                update_text
             )
             VALUES (%s, %s, %s, %s, %s)
             """,

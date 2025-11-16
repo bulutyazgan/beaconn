@@ -140,7 +140,7 @@ def save_caller_guide(
                 case_id,
                 update_source,
                 update_type,
-                description
+                update_text
             )
             VALUES (%s, %s, %s, %s)
             """,
@@ -213,7 +213,7 @@ def save_helper_guide(
                 assignment_id,
                 update_source,
                 update_type,
-                description
+                update_text
             )
             VALUES (%s, %s, %s, %s, %s)
             """,

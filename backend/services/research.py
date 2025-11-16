@@ -34,7 +34,7 @@ def run_input_processing_agent(case_id: int) -> Dict:
     Extracts structured data from raw_problem_description:
     - people_count, mobility_status, vulnerability_factors
     - urgency, danger_level
-    - cleaned description
+    - cleaned update_text
 
     Updates the cases row with extracted data.
 
@@ -94,10 +94,10 @@ def run_input_processing_agent(case_id: int) -> Dict:
             "api_token": API_TOKEN,
             "model": MODELS["recommended"],  # Claude Sonnet
             "messages": [
-                {"role": "system", "content": system_prompt},
                 {
                     "role": "user",
                     "content": (
+                        f"{system_prompt}\n\n"
                         f"User text: {raw_text}\n"
                         f"Location: ({latitude}, {longitude})"
                     )
@@ -157,7 +157,7 @@ def run_input_processing_agent(case_id: int) -> Dict:
                 case_id,
                 update_source,
                 update_type,
-                description
+                update_text
             )
             VALUES (%s, %s, %s, %s)
             """,
