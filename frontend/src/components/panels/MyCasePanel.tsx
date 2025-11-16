@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FileText, Shield, Send, Clock, ChevronUp, ChevronDown, Maximize2, Minimize2, Navigation } from 'lucide-react';
 import { getCallerGuide, type CallerGuide, type Case, getCase, getCaseAssignments, getUser } from '@/services/api';
 import { MapContainer } from '@/components/map/MapContainer';
+import { RouteMap } from '@/components/map/RouteMap';
 import type { Location, HelpRequest } from '@/types';
 
 interface MyCasePanelProps {
@@ -35,7 +36,9 @@ export function MyCasePanel({ caseId }: MyCasePanelProps) {
   const [pendingQuestion, setPendingQuestion] = useState<ChatMessage | null>(null);
   const [assignments, setAssignments] = useState<any[]>([]);
   const [helperInfo, setHelperInfo] = useState<any>(null);
-  const [helperDistance, setHelperDistance] = useState<number | null>(null);
+  const [helperLocation, setHelperLocation] = useState<Location | null>(null);
+  const [routeDistance, setRouteDistance] = useState<string>('');
+  const [routeDuration, setRouteDuration] = useState<string>('');
 
   // Fetch case data for map display
   useEffect(() => {
@@ -110,24 +113,37 @@ export function MyCasePanel({ caseId }: MyCasePanelProps) {
         const assignmentsList = await getCaseAssignments(caseId);
         setAssignments(assignmentsList);
 
-        // If there's an active assignment, fetch helper info
+        // If there's an active assignment, fetch helper info and live location
         if (assignmentsList.length > 0) {
           const activeAssignment = assignmentsList.find(a => !a.completed_at);
           if (activeAssignment) {
             const helper = await getUser(activeAssignment.helper_user_id.toString());
             setHelperInfo(helper);
 
-            // Calculate distance if we have both locations
-            if (helper.location && caseData?.location) {
-              const distance = calculateDistance(
-                caseData.location.latitude,
-                caseData.location.longitude,
-                helper.location.latitude,
-                helper.location.longitude
-              );
-              setHelperDistance(distance);
+            // Fetch helper's latest location from location_tracking table
+            try {
+              const locationResponse = await fetch(`http://localhost:8000/api/users/${activeAssignment.helper_user_id}/location-history?limit=1`);
+              const locationData = await locationResponse.json();
+
+              if (locationData.locations && locationData.locations.length > 0) {
+                const latestLocation = locationData.locations[0];
+                setHelperLocation({
+                  lat: latestLocation.latitude,
+                  lng: latestLocation.longitude
+                });
+              }
+            } catch (err) {
+              console.error('Failed to fetch helper location:', err);
             }
+          } else {
+            // No active assignment, clear helper data
+            setHelperInfo(null);
+            setHelperLocation(null);
           }
+        } else {
+          // No assignments, clear helper data
+          setHelperInfo(null);
+          setHelperLocation(null);
         }
       } catch (err) {
         console.error('Failed to fetch assignments:', err);
@@ -135,24 +151,11 @@ export function MyCasePanel({ caseId }: MyCasePanelProps) {
     };
 
     fetchAssignmentsAndHelper();
-    // Poll every 3 seconds for real-time updates
-    const interval = setInterval(fetchAssignmentsAndHelper, 3000);
+    // Poll every 2 seconds for real-time updates
+    const interval = setInterval(fetchAssignmentsAndHelper, 2000);
 
     return () => clearInterval(interval);
   }, [caseId, caseData]);
-
-  // Haversine formula to calculate distance between two points
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
-    const R = 6371; // Earth's radius in km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // Distance in km
-  };
 
   const handleButtonSelect = async (option: ButtonOption) => {
     if (!pendingQuestion) return;
@@ -425,19 +428,33 @@ export function MyCasePanel({ caseId }: MyCasePanelProps) {
     timestamp: caseData.created_at,
   } : null;
 
+  const handleRouteCalculated = (distance: string, duration: string) => {
+    setRouteDistance(distance);
+    setRouteDuration(duration);
+  };
+
   return (
     <div className="fixed inset-0 pt-16 flex flex-col lg:flex-row">
       {/* Map Section - Left side on desktop, top on mobile */}
       <div className="flex-1 h-1/2 lg:h-full lg:w-1/2 relative">
-        {caseLocation && helpRequest ? (
+        {caseLocation ? (
           <>
-            <MapContainer
-              center={caseLocation}
-              zoom={16}
-              helpRequests={[helpRequest]}
-              userLocation={caseLocation}
-              onMarkerClick={() => {}}
-            />
+            {/* Show RouteMap if helper is assigned, otherwise show regular MapContainer */}
+            {helperInfo && helperLocation ? (
+              <RouteMap
+                helperLocation={helperLocation}
+                victimLocation={caseLocation}
+                onRouteCalculated={handleRouteCalculated}
+              />
+            ) : (
+              <MapContainer
+                center={caseLocation}
+                zoom={16}
+                helpRequests={helpRequest ? [helpRequest] : []}
+                userLocation={caseLocation}
+                onMarkerClick={() => {}}
+              />
+            )}
 
             {/* Status Overlay - Fixed position on map */}
             <div className="absolute top-6 right-4 z-10 mt-4">
@@ -461,16 +478,21 @@ export function MyCasePanel({ caseId }: MyCasePanelProps) {
                     <p className="text-xs text-green-300 font-semibold mb-1">
                       {helperInfo.name} is responding
                     </p>
-                    {helperDistance !== null && (
-                      <div className="flex items-center gap-1 mb-1">
-                        <Navigation className="w-3 h-3 text-green-400" />
-                        <p className="text-xs text-gray-300">
-                          {helperDistance < 1
-                            ? `${(helperDistance * 1000).toFixed(0)}m away`
-                            : `${helperDistance.toFixed(1)}km away`
-                          }
-                        </p>
-                      </div>
+                    {routeDistance && routeDuration && (
+                      <>
+                        <div className="flex items-center gap-1 mb-1">
+                          <Navigation className="w-3 h-3 text-green-400" />
+                          <p className="text-xs text-gray-300">
+                            {routeDistance}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1 mb-1">
+                          <Clock className="w-3 h-3 text-blue-400" />
+                          <p className="text-xs text-gray-300">
+                            ETA: {routeDuration}
+                          </p>
+                        </div>
+                      </>
                     )}
                     <p className="text-xs text-gray-500">
                       Help is on the way. Stay safe!
