@@ -58,9 +58,9 @@ Setup (development)
      - python -m venv .venv && source .venv/bin/activate
      - pip install -r requirements.txt
    - Start backend (dev):
-     - # Option A: run via uvicorn (recommended for FastAPI)
+     - ### Option A: run via uvicorn (recommended for FastAPI)
        - uvicorn app:app --reload --host 0.0.0.0 --port 8000
-     - # Option B: legacy entrypoints
+     - ### Option B: legacy entrypoints
        - python main.py
        - or python agent_graph.py (for agent-only runs)
    - API will be available at: http://localhost:8000
